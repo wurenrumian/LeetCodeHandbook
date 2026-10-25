@@ -1,0 +1,527 @@
+/**
+ * 视觉基调：简洁技术文档。
+ *
+ * 三件事决定这个主题的"手感觉"：
+ *   1. 品牌色偏冷（靛蓝），但正文用近黑灰而不是纯黑，长时间阅读不刺眼；
+ *   2. 代码块是主角 —— 行号、行高亮、复制按钮都单独调过；
+ *   3. 自定义容器（提示/坑点/易错）承担"讲解节奏"，颜色克制不喧哗。
+ */
+
+:root {
+  /* 品牌色：靛蓝，取 600 档做链接与强调 */
+  --vp-c-brand-1: #4051b5;
+  --vp-c-brand-2: #4c5fc7;
+  --vp-c-brand-3: #6474d6;
+  --vp-c-brand-soft: rgba(64, 81, 181, 0.12);
+
+  --vp-c-text-1: #1f2328;
+  --vp-c-text-2: #4a5260;
+  --vp-c-text-3: #8b93a1;
+
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-alt: #f7f8fa;
+  --vp-c-bg-soft: #f7f8fa;
+  --vp-c-bg-elv: #ffffff;
+
+  --vp-c-divider: #e5e7eb;
+  --vp-c-border: #dcdfe6;
+  --vp-c-gutter: #eef0f3;
+
+  --vp-c-default-soft: rgba(142, 150, 170, 0.14);
+
+  /* 正文字体栈：中文优先思源/系统黑体，西文取 Inter 系 */
+  --vp-font-family-base: 'Inter var', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC',
+    'Noto Sans CJK SC', sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', Consolas,
+    'Liberation Mono', Menlo, monospace;
+
+  --vp-sidebar-width: 264px;
+}
+
+.dark {
+  --vp-c-brand-1: #8b9bf5;
+  --vp-c-brand-2: #7c8cf0;
+  --vp-c-brand-3: #6b7ce8;
+  --vp-c-brand-soft: rgba(139, 155, 245, 0.14);
+
+  --vp-c-text-1: #e6e8ec;
+  --vp-c-text-2: #a8b0bd;
+  --vp-c-text-3: #6e7684;
+
+  --vp-c-bg: #16181d;
+  --vp-c-bg-alt: #1b1e24;
+  --vp-c-bg-soft: #1b1e24;
+  --vp-c-bg-elv: #202430;
+
+  --vp-c-divider: #2a2e36;
+  --vp-c-border: #343941;
+  --vp-c-gutter: #202430;
+
+  --vp-c-default-soft: rgba(160, 170, 190, 0.16);
+}
+
+/* ---------- 站点骨架 ---------- */
+
+.VPNavBar:not(.home) {
+  background: color-mix(in srgb, var(--vp-c-bg) 88%, transparent);
+}
+
+.VPSidebar {
+  background: var(--vp-c-bg-alt);
+}
+
+/* 侧边栏分组标题：小号大写，弱化，像手册的章节标签 */
+.VPSidebarItem.level-0 > .item > .text {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+}
+
+.VPSidebarItem.level-1.is-active > .item .text {
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+}
+
+/* ---------- 正文排版 ---------- */
+
+.vp-doc {
+  line-height: 1.78;
+  font-size: 15.5px;
+}
+
+.vp-doc h1 {
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+.vp-doc h2 {
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  padding-top: 34px;
+  margin-top: 40px;
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.vp-doc h3 {
+  font-size: 17px;
+  font-weight: 650;
+  margin-top: 30px;
+}
+
+.vp-doc h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--vp-c-text-2);
+}
+
+.vp-doc p,
+.vp-doc li {
+  color: var(--vp-c-text-1);
+}
+
+.vp-doc a {
+  font-weight: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2.5px;
+}
+
+.vp-doc strong {
+  font-weight: 640;
+  color: var(--vp-c-text-1);
+}
+
+/* 行内代码：淡底 + 品牌色文字，别抢正文行高 */
+.vp-doc :not(pre) > code {
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  background: var(--vp-c-default-soft);
+  color: var(--vp-c-brand-1);
+  font-weight: 500;
+}
+
+.dark .vp-doc :not(pre) > code {
+  color: var(--vp-c-brand-1);
+}
+
+.vp-doc blockquote {
+  border-left: 3px solid var(--vp-c-divider);
+  color: var(--vp-c-text-2);
+  padding-left: 16px;
+}
+
+.vp-doc blockquote > p {
+  color: var(--vp-c-text-2);
+  font-size: 14.5px;
+}
+
+.vp-doc ul,
+.vp-doc ol {
+  padding-left: 1.35em;
+}
+
+.vp-doc li + li {
+  margin-top: 0.35em;
+}
+
+/* 表格：去掉竖线，横向细线，接近技术手册 */
+.vp-doc table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 18px 0;
+}
+
+.vp-doc tr {
+  border-top: none;
+  background: transparent;
+}
+
+.vp-doc th,
+.vp-doc td {
+  border: none;
+  border-bottom: 1px solid var(--vp-c-divider);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.vp-doc th {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--vp-c-text-3);
+  letter-spacing: 0.02em;
+  background: transparent;
+}
+
+.vp-doc tr:nth-child(2n) {
+  background: transparent;
+}
+
+.vp-doc td:first-child {
+  color: var(--vp-c-text-1);
+}
+
+/* ---------- 代码块 ---------- */
+
+.vp-doc div[class*='language-'] {
+  border-radius: 8px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-alt);
+  margin: 18px 0;
+}
+
+.vp-doc div[class*='language-'] pre {
+  padding: 14px 0;
+  font-size: 13.5px;
+  line-height: 1.72;
+}
+
+.vp-doc div[class*='language-'] code {
+  font-size: 13.5px;
+}
+
+/* 行号列：窄、弱、右侧留白，像编辑器的 gutter */
+.vp-doc .line-numbers-wrapper {
+  padding-top: 14px;
+  padding-right: 14px;
+  color: var(--vp-c-text-3);
+  opacity: 0.55;
+  font-size: 12px;
+  border-right: none;
+}
+
+.dark .vp-doc div[class*='language-'] {
+  background: #12141a;
+}
+
+/* 语言标签 */
+.vp-doc div[class*='language-'] > .lang {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-3);
+}
+
+/* 代码块标题（```cpp [dijkstra.cpp]） */
+.vp-doc div[class*='language-'] > .title {
+  font-family: var(--vp-font-family-mono);
+  font-size: 11.5px;
+  color: var(--vp-c-text-3);
+  border-bottom: 1px solid var(--vp-c-divider);
+  padding: 7px 14px;
+  background: transparent;
+}
+
+/* 复制按钮：默认半透明，hover 才明显 */
+.vp-doc div[class*='language-'] > button.copy {
+  background-color: transparent;
+  border-color: transparent;
+  opacity: 0.5;
+}
+
+.vp-doc div[class*='language-']:hover > button.copy {
+  opacity: 0.85;
+}
+
+/* 行高亮：只加左侧竖条 + 很淡的底 */
+.vp-doc .line.highlighted {
+  background: var(--vp-c-brand-soft);
+  box-shadow: inset 2px 0 0 var(--vp-c-brand-1);
+  display: inline-block;
+  width: calc(100% + 48px);
+  margin: 0 -24px;
+  padding: 0 24px;
+}
+
+/* 代码内 diff 记号 */
+.vp-doc .line.diff.add {
+  background: rgba(26, 127, 55, 0.12);
+  box-shadow: inset 2px 0 0 #1a7f37;
+}
+
+.vp-doc .line.diff.remove {
+  background: rgba(207, 34, 46, 0.1);
+  box-shadow: inset 2px 0 0 #cf222e;
+}
+
+/* ---------- 自定义容器 ---------- */
+
+.vp-doc .custom-block {
+  border-radius: 8px;
+  border: 1px solid var(--vp-c-divider);
+  padding: 14px 18px;
+  font-size: 14.5px;
+  margin: 20px 0;
+}
+
+.vp-doc .custom-block .custom-block-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.vp-doc .custom-block p {
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+.vp-doc .custom-block.tip {
+  border-color: color-mix(in srgb, var(--vp-c-brand-1) 30%, var(--vp-c-divider));
+  background: var(--vp-c-brand-soft);
+}
+
+.vp-doc .custom-block.warning {
+  border-color: rgba(183, 121, 31, 0.32);
+  background: rgba(183, 121, 31, 0.07);
+}
+
+.vp-doc .custom-block.danger {
+  border-color: rgba(207, 34, 46, 0.28);
+  background: rgba(207, 34, 46, 0.06);
+}
+
+.dark .vp-doc .custom-block.warning {
+  background: rgba(210, 153, 34, 0.09);
+}
+
+.dark .vp-doc .custom-block.danger {
+  background: rgba(248, 81, 73, 0.08);
+}
+
+/* details：细节折叠块 */
+.vp-doc details {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 18px 0;
+  background: var(--vp-c-bg-alt);
+}
+
+.vp-doc details summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vp-c-text-2);
+  list-style: none;
+}
+
+.vp-doc details summary::-webkit-details-marker {
+  display: none;
+}
+
+.vp-doc details summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 7px;
+  color: var(--vp-c-brand-1);
+  transition: transform 0.15s;
+}
+
+.vp-doc details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.vp-doc details > *:not(summary) {
+  font-size: 14.5px;
+}
+
+/* ---------- 首页 ---------- */
+
+.VPHero .name {
+  letter-spacing: -0.03em;
+}
+
+.VPHero .text {
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.VPHero .tagline {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--vp-c-text-2);
+  max-width: 620px;
+}
+
+.VPFeature {
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-alt);
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.VPFeature:hover {
+  border-color: var(--vp-c-brand-2);
+  transform: translateY(-1px);
+}
+
+.VPFeature .title {
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.VPFeature .details {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--vp-c-text-2);
+}
+
+/* ---------- 通用排版工具类 ---------- */
+
+/* 页首速查卡：做题前的 30 秒回顾 */
+.cheat {
+  border: 1px solid var(--vp-c-divider);
+  border-left: 3px solid var(--vp-c-brand-1);
+  border-radius: 6px;
+  background: var(--vp-c-bg-alt);
+  padding: 14px 18px;
+  margin: 22px 0;
+  font-size: 14px;
+}
+
+.cheat > p:first-child {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vp-c-brand-1);
+}
+
+.cheat ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.cheat li {
+  font-size: 14px;
+  line-height: 1.72;
+  color: var(--vp-c-text-2);
+}
+
+/* 字段语义表：变量 → 含义 → 在代码里怎么用 */
+.semantics th:first-child,
+.semantics td:first-child {
+  width: 22%;
+  font-family: var(--vp-font-family-mono);
+  font-size: 13px;
+  color: var(--vp-c-brand-1);
+  white-space: nowrap;
+}
+
+.semantics td:nth-child(2) {
+  width: 40%;
+}
+
+/* 对比两栏：模板 vs 变体 */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.compare > * {
+  min-width: 0;
+}
+
+.compare > * > div[class*='language-'] {
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .compare {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 复杂度徽标行 */
+.cx {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.cx > span {
+  font-family: var(--vp-font-family-mono);
+  font-size: 12.5px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-alt);
+  color: var(--vp-c-text-2);
+}
+
+.cx b {
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
+}
+
+/* 移动端收紧 */
+@media (max-width: 640px) {
+  .vp-doc {
+    font-size: 15px;
+  }
+  .vp-doc h1 {
+    font-size: 25px;
+  }
+  .vp-doc h2 {
+    font-size: 19px;
+  }
+  .vp-doc .line.highlighted {
+    width: calc(100% + 32px);
+    margin: 0 -16px;
+    padding: 0 16px;
+  }
+}

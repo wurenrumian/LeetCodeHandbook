@@ -1,0 +1,16 @@
+{
+  "name": "leetcode-handbook",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "LeetCode 算法专题手册 — 从代码形态讲清常见算法",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "markdown-it-container": "^4.0.0",
+    "vitepress": "^1.6.4"
+  }
+}
