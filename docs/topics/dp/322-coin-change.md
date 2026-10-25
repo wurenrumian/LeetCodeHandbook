@@ -263,7 +263,7 @@ dp[i] = min(dp[i], dp[i - coin] + 1);
 
 4. **`coin > i` 忘记跳过**：`dp[i - coin]` 下标为负 → 越界。虽然 `dp` 的 `operator[]` 不做检查，但读到的垃圾值会污染 `min`。
 
-5. **`coin > i` 忘记跳过**：`dp[i - coin]` 下标为负 → 越界。虽然 `dp` 的 `operator[]` 不做检查，但读到的垃圾值会污染 `min`。
+5. **`amount + 1` 哨兵当成 `INT_MAX` 用**：那套"要判可达"的规矩只属于 `INT_MAX`。`amount + 1` 的设计恰恰是**不用判** —— `INF + 1 > INF`，`min` 天然不选它。别把两种哨兵的处理方式混着背。
 :::
 
 ::: info 补充

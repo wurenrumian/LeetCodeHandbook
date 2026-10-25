@@ -145,13 +145,6 @@ public:
     }
 };
 
-// 辅助：打印前 k 个元素，方便肉眼验证
-void dump(const vector<int>& v, int k) {
-    cout << "[";
-    for (int i = 0; i < k; ++i) cout << (i ? ", " : "") << v[i];
-    cout << "]";
-}
-
 int main() {
     Solution sol;
 

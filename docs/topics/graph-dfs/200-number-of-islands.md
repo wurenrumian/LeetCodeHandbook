@@ -124,8 +124,6 @@ for (int row = 0; row < rows; ++row)
 ```cpp
 #include <cassert>
 #include <iostream>
-#include <queue>
-#include <utility>
 #include <vector>
 using namespace std;
 

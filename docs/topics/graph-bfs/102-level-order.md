@@ -122,7 +122,6 @@ while (!queue.empty()) {
 
 ```cpp
 #include <cassert>
-#include <cstdint>
 #include <iostream>
 #include <queue>
 #include <vector>

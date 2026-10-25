@@ -394,14 +394,6 @@ index.erase(???);                  // ② 拿不到 key 了
 统一 `static_cast<int>(cache.size()) == capacity_`。本页代码在 `-Wall -Wextra` 下零警告，靠的就是这个转换。
 :::
 
-::: warning 坑点
-`cache.back()` 在链表为空时是 **UB**，不是返回空值。
-
-代码里它只出现在 `cache.size() == capacity_` 的分支内。只要 `capacity >= 1`，这个分支就保证了链表非空。
-
-但如果你自己加一个 `capacity == 0` 的允许值（有些变体题要求），那个分支就会在空链表上取 `back()`。容量 0 要单独早退。
-:::
-
 ## 坑点
 
 ::: warning 坑点
@@ -422,6 +414,8 @@ index.erase(???);                  // ② 拿不到 key 了
 6. **用 `vector` 或 `deque` 代替 `list`**：它们的迭代器/引用在插入删除后可能全部失效，`index` 里存的东西立刻变成悬空。必须是节点式容器。
 
 7. **`cache.size()` 与 `int` 比较**：无符号/有符号混比，`-Wextra` 下报警告，`capacity` 为负时结果静默错误。
+
+8. **`cache.back()` 用在空链表上**：链表为空时 `back()` 是 **UB**，不是返回空值。代码里它只出现在 `cache.size() == capacity_` 的分支内，只要 `capacity >= 1` 就保证链表非空；但如果你自己允许 `capacity == 0`（有些变体题要求），那个分支就会在空链表上取 `back()` —— 容量 0 必须单独早退。
 :::
 
 ::: danger 易错
@@ -442,7 +436,7 @@ index.erase(???);                  // ② 拿不到 key 了
 | 手写双向链表（面试要求不用 `std::list`） | 加 `head`/`tail` 两个哨兵节点，写 `unlink(node)` 和 `pushFront(node)` 两个私有函数 |
 | 改成 LFU（460） | 哈希表里再套一层"频次 → 该频次的链表"，淘汰频次最小的那一组的尾部 |
 | 需要线程安全 | `get` 也改结构，所以读写都要持锁；或改成分段锁 |
-| 需要 `O(1)` 遍历所有键 | 加一个 `vector` 记录所有 key（`list` 的迭代器稳定，可以放心存） |
+| 需要 `O(1)` 遍历所有键 | 加一个 `vector` 记录所有 key（`list` 的迭代器稳定，可以放心存），淘汰时用 `swap` + `pop_back` 定位删除才是 O(1)；直接 `erase` 中间元素是 O(n) |
 | 容量不固定，可动态调整 | 加 `resize(newCapacity)`，缩小容量时循环淘汰到符合大小 |
 | 淘汰时不真删，只标记 | 变成 `Clock`/二次机会算法，`get` 时置访问位 |
 
