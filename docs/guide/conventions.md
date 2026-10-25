@@ -8,18 +8,50 @@
 
 ### 必须
 
-- 每段代码**完整可编译**：带 `<bits/stdc++.h>` 或用到的头文件，带 `namespace std` 或显式 `std::`，带 `main` 和至少一个测试用例
+- 每段代码**完整可编译**：只显式包含真正用到的头文件，带 `using namespace std;`，带 `main` 和至少一个测试用例
 - `main` 里用 `assert` 或直接打印结果，跑完 `return 0`
 - 变量名用完整单词：`left` / `right` / `mid` / `count` / `window`，**不要** `l` `r` `m` `c`（`l`/`1` 在编辑器里分不清，是真实事故来源）
   - 例外：题目约定俗成的短名，如 `i` `j` 循环变量
 - 数值类型明示：下标用 `int`，涉及 `n * m` 或前缀和的用 `long long`
 - 容量够就用 `array` 或 `vector`，别用裸指针 `new`
 
-### 避免
+### 禁止
 
+- **`#include <bits/stdc++.h>`** —— 见下面单独一节，这条没有例外
 - 不要用 `#define int long long` 这类宏污染
 - 不要写 `while(true)` 再靠 `break` 兜底，除非是 BFS 出队式写法
 - 不要为了"短"牺牲可读性：`for (int i = 0; i < n; ++i)` 比 `for(auto&x:a)` 在需要下标时更清楚
+
+::: danger 易错
+**永远不要用 `#include <bits/stdc++.h>`**
+
+这是 GCC 私有的聚合头，不是 C++ 标准的一部分。三个实际危害：
+
+1. **不可移植**：clang + libc++、MSVC、Apple Clang 都没有这个头。换台机器就编不过。
+2. **编译变慢**：一次拉进全部 STL，构建时间随标准库增长而无谓增加。
+3. **隐藏依赖**：读代码的人看不出这段用了 `deque` 还是 `set`，也没法判断哪些头是多余的。
+
+每段代码只写它真正用到的头文件。常见的对应关系：
+
+| 用到的 | 需要的头 |
+|---|---|
+| `vector` | `<vector>` |
+| `string` | `<string>` |
+| `unordered_map` / `unordered_set` | `<unordered_map>` / `<unordered_set>` |
+| `map` / `set` | `<map>` / `<set>` |
+| `queue` / `priority_queue` | `<queue>` |
+| `stack` | `<stack>` |
+| `deque` | `<deque>` |
+| `pair` | `<utility>` |
+| `array` | `<array>` |
+| `sort` / `max` / `reverse` / `lower_bound` | `<algorithm>` |
+| `accumulate` | `<numeric>` |
+| `INT_MAX` / `INT_MIN` | `<climits>` |
+| `assert` | `<cassert>` |
+| `cout` / `endl` | `<iostream>` |
+
+漏了 `#include <cassert>` 是常见错误 —— 本地某些编译器的 `assert` 恰好被别的头间接带进来了，换环境才炸。
+:::
 
 ### 代码块写法
 
