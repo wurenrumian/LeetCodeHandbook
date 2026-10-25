@@ -86,7 +86,22 @@ return slow;
 
 ### 变体 3：移动零（283）
 
-有效元素 = "非零"。本质和 27 题一样，但要保持相对顺序，因此**不能交换**，只能覆盖式写入。
+有效元素 = "非零"。本质和 27 题一样，且**必须保持相对顺序**。交换和覆盖两种写法都保序，也都不需要额外空间：
+
+```cpp
+// 覆盖式：末尾要手动补零
+int slow = 0;
+for (int fast = 0; fast < n; ++fast)
+    if (nums[fast] != 0) nums[slow++] = nums[fast];
+fill(nums.begin() + slow, nums.end(), 0);
+
+// 交换式：不用补零
+int slow = 0;
+for (int fast = 0; fast < n; ++fast)
+    if (nums[fast] != 0) swap(nums[slow++], nums[fast]);
+```
+
+交换式能保序的原因是：`slow` 永远落在**第一个 0** 上，被换出去的恰好是 0（`slow == fast` 时是换自己）。两种写法都正确，选一种即可。
 
 ### 变体 4：三数之和（15）
 

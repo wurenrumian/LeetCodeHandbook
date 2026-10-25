@@ -105,13 +105,19 @@ for (int fast = 0; fast < n; ++fast)
 本题因为有序，两者结果相同（重复必然相邻）。但 `nums[slow - 1]` 表达的是**不变式**（"结果里的最后一个"），语义更强 —— 换成 27 移除元素、或"每个元素最多保留两次"时，只有它能直接改对。
 
 ::: info 补充
-"每个元素最多保留两次"（[80 题](https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/)）只改一个数字：比较对象从 `nums[slow - 1]` 变成 `nums[slow - 2]`，同时 `slow` 从 2 起步。
+"每个元素最多保留两次"（[80 题](https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/)）要改**三处**：比较对象从 `nums[slow - 1]` 变成 `nums[slow - 2]`、`slow` 从 2 起步、**再补一个长度特判**。
 
 ```cpp
-if (nums[fast] != nums[slow - 2]) nums[slow++] = nums[fast];
+if (n <= 2) return n;                    // ← 少了这行，[1] 会返回 2
+int slow = 2;
+for (int fast = 2; fast < n; ++fast)
+    if (nums[fast] != nums[slow - 2]) nums[slow++] = nums[fast];
+return slow;
 ```
 
-为什么？因为"保留 2 个"意味着连续 2 个相同是允许的，只有第 3 个才该扔。**`slow - k` 就是"保留 k 个"的通用形式。**
+**那个特判不能省**：`slow = 2` 起步时，长度 ≤ 2 的输入循环一次都不进，直接返回 2。`[1]` 会返回 2（应为 1），`[]` 会返回 2（应为 0）。
+
+为什么比较 `slow - 2`？因为"保留 2 个"意味着连续 2 个相同是允许的，只有第 3 个才该扔。**`slow - k` 就是"保留 k 个"的通用形式，而它总是需要 `if (n <= k) return n;` 这条边界。**
 :::
 
 ## 完整可编译代码
@@ -249,7 +255,7 @@ int main() {
 | 变化 | 改什么 |
 |---|---|
 | 移除元素（[27](https://leetcode.cn/problems/remove-element/)） | 条件换成 `nums[fast] != val`，`slow` 从 0 起 |
-| 每个最多保留 2 个（[80](https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/)） | 比较 `nums[slow - 2]`，`slow` 从 2 起 |
+| 每个最多保留 2 个（[80](https://leetcode.cn/problems/remove-duplicates-from-sorted-array-ii/)） | 比较 `nums[slow - 2]`，`slow` 从 2 起，**并补 `if (n <= 2) return n;`** |
 | 移动零（[283](https://leetcode.cn/problems/move-zeroes/)） | 条件 `nums[fast] != 0`，末尾补零 |
 | 有序数组的平方（[977](https://leetcode.cn/problems/squares-of-a-sorted-array/)） | 换成**对撞**指针，从两端往中间填 |
 | 删除重复项但允许乱序 | 不再需要 `slow - 1` 的局部性，改用哈希 |
