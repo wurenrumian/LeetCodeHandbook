@@ -37,7 +37,7 @@ title: 704 · 二分查找
 
 ## 模板对照
 
-::: compare
+::: compare 通用模板 [left, right) | 704 本题
 ```cpp
 // 通用模板：[left, right)
 int left = 0;
@@ -54,15 +54,16 @@ while (left < right) {
 return -1;
 ```
 ```cpp
-// 本题：一模一样，只是把判断拆成了三段注释
+// 本题：一模一样，只是多了端点注释
 int search(vector<int>& nums, int target) {
     int left = 0;
-    int right = static_cast<int>(nums.size());  // 开区间，right 取不到
+    int right = static_cast<int>(nums.size());
+    //             ↑ 开区间，right 取不到
     while (left < right) {
         int mid = left + (right - left) / 2;
-        if (nums[mid] == target) return mid;    // 命中
-        if (nums[mid] < target) left = mid + 1; // 中点太小 → 丢左半
-        else                    right = mid;    // 中点太大 → 丢右半
+        if (nums[mid] == target) return mid;
+        if (nums[mid] < target) left = mid + 1;
+        else                    right = mid;
     }
     return -1;
 }

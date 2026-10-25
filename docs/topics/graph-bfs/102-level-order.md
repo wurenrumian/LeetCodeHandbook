@@ -63,14 +63,14 @@ BFS 的访问顺序天然就是层序，这也是"按层"类题目应该优先 B
 
 ## 模板对照
 
-::: compare
+::: compare BFS 通用骨架 | 102 本题：每层一个 vector
 ```cpp
 // BFS 通用骨架：队列 + 层界快照
 queue<Node*> queue;
 queue.push(start);
 while (!queue.empty()) {
-    int levelSize = queue.size();       // 快照
-    while (levelSize--) {               // 只处理本层
+    int levelSize = queue.size();   // 快照
+    while (levelSize--) {
         Node* cur = queue.front(); queue.pop();
         // 处理 cur
         // 把 cur 的邻居入队

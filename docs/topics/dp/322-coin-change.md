@@ -51,25 +51,26 @@ dp[11] = min(dp[11-1], dp[11-2], dp[11-5]) + 1
 
 ## 模板对照
 
-::: compare
+::: compare 完全背包通用骨架 | 322 本题：cost 恒为 1
 ```cpp
 // 完全背包通用骨架：物品可重复，容量正序
 vector<int> dp(capacity + 1, INF);
 dp[0] = 0;
-for (int i = 1; i <= capacity; ++i) {           // 外层：容量
-    for (int c : items) {                       // 内层：物品
+for (int i = 1; i <= capacity; ++i) {
+    for (int c : items) {
         if (c > i) continue;
         dp[i] = min(dp[i], dp[i - c] + cost);
     }
 }
 ```
 ```cpp
-// 本题：cost 恒为 1，INF 用 amount+1
-vector<int> dp(amount + 1, amount + 1);   // 哨兵
-dp[0] = 0;                                // 唯一确定的起点
+// 本题：cost 恒为 1
+//       INF 换成 amount + 1（安全哨兵）
+vector<int> dp(amount + 1, amount + 1);
+dp[0] = 0;
 for (int i = 1; i <= amount; ++i) {
     for (int c : coins) {
-        if (c > i) continue;              // 面值超过目标，跳过
+        if (c > i) continue;
         dp[i] = min(dp[i], dp[i - c] + 1);
     }
 }

@@ -27,6 +27,34 @@ function plainContainer(name: string, className: string) {
   }
 }
 
+/**
+ * 模板对照：左模板 / 右本题。
+ *
+ * 写法：::: compare 通用模板 | 本题改动
+ * 两个标题先输出，markdown 的两段代码块随后输出，在 2 列网格里自然落成
+ *   第 1 行 = 两个标题，第 2 行 = 两段代码，不会错位。
+ */
+function compareContainer(md: any) {
+  return {
+    validate: (info: string) => /^compare(\s|$)/.test(info.trim()),
+    render: (tokens: Token[], idx: number) => {
+      const token = tokens[idx]
+      if (token.nesting !== 1) return '</div>\n'
+
+      const raw = token.info.trim().slice('compare'.length).trim()
+      const [left, right] = raw.split('|').map((s: string) => s.trim())
+      const l = md.utils.escapeHtml(left || '通用模板')
+      const r = md.utils.escapeHtml(right || '本题改动')
+
+      return (
+        '<div class="compare">' +
+        `<div class="cmp-head cmp-head-l">${l}</div>` +
+        `<div class="cmp-head cmp-head-r">${r}</div>\n`
+      )
+    }
+  }
+}
+
 export default defineConfig({
   lang: 'zh-CN',
   title: 'LeetCode 算法手册',
@@ -49,7 +77,7 @@ export default defineConfig({
     },
     config(md) {
       md.use(container, 'cheat', cheatContainer(md))
-      md.use(container, 'compare', plainContainer('compare', 'compare'))
+      md.use(container, 'compare', compareContainer(md))
       md.use(container, 'semantics', plainContainer('semantics', 'semantics'))
     }
   },

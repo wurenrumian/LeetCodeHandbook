@@ -46,7 +46,7 @@ title: 3 · 无重复字符的最长子串
 
 ## 模板对照
 
-::: compare
+::: compare 求最长的通用骨架 | 3 本题：填进非法条件
 ```cpp
 // 求最长的通用骨架
 int left = 0, best = 0;
@@ -59,16 +59,17 @@ for (int right = 0; right < n; ++right) {
 }
 ```
 ```cpp
-// 本题：把"不合法"填成"有重复字符"
+// 本题：填入非法条件 —— 有重复字符
 int left = 0, best = 0;
-array<int, 128> count{};        // 字符集小，用数组不用哈希
+array<int, 128> count{};   // 数组代替哈希
 for (int right = 0; right < n; ++right) {
-    ++count[s[right]];          // 1. 加入
-    while (count[s[right]] > 1) {   // 2. 只可能是新来的这个重复
+    ++count[s[right]];     // 1. 加入
+    while (count[s[right]] > 1) {   // 2. 收缩
+        // 只可能是新来的这个字符重复
         --count[s[left]];
         ++left;
     }
-    best = max(best, right - left + 1);   // 3. 收缩后更新
+    best = max(best, right - left + 1);   // 3. 更新
 }
 ```
 :::

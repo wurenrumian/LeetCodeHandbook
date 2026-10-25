@@ -49,7 +49,7 @@ title: 26 · 删除有序数组中的重复项
 
 ## 模板对照
 
-::: compare
+::: compare 原地删除的通用骨架 | 26 本题：slow 从 1 起
 ```cpp
 // 原地删除的通用骨架
 int slow = 0;                    // 写指针
@@ -62,11 +62,13 @@ for (int fast = 0; fast < n; ++fast) {
 return slow;                     // [0, slow) 是结果
 ```
 ```cpp
-// 本题：slow 从 1 起，条件是"和上一个保留的不同"
-if (nums.empty()) return 0;      // 特判，否则下面 slow=1 出错
-int slow = 1;                    // nums[0] 天然保留
+// 本题：slow 从 1 起
+// 条件 = 和"上一个保留的"不同
+if (nums.empty()) return 0;   // 否则 slow=1 越界
+int slow = 1;                 // nums[0] 天然保留
 for (int fast = 1; fast < n; ++fast) {
-    if (nums[fast] != nums[slow - 1]) {   // 关键：和"已保留的最后一个"比
+    // 关键：比的是已保留的最后一个
+    if (nums[fast] != nums[slow - 1]) {
         nums[slow] = nums[fast];
         ++slow;
     }
