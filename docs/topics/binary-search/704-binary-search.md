@@ -92,7 +92,9 @@ int search(vector<int>& nums, int target) {
 ## 完整可编译代码
 
 ```cpp
-#include <bits/stdc++.h>
+#include <cassert>
+#include <iostream>
+#include <vector>
 using namespace std;
 
 class Solution {

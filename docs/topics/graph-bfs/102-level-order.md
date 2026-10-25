@@ -120,7 +120,11 @@ while (!queue.empty()) {
 ## 完整可编译代码
 
 ```cpp
-#include <bits/stdc++.h>
+#include <cassert>
+#include <cstdint>
+#include <iostream>
+#include <queue>
+#include <vector>
 using namespace std;
 
 struct TreeNode {

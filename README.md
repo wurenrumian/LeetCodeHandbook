@@ -67,7 +67,23 @@ docs/
 
 ## 内容真实性
 
-所有题目页里的 C++ 代码都**实际编译并运行过**（`g++ -std=c++17 -Wall -Wextra`，零警告，所有 `assert` 通过）。不写"看起来能跑"的伪代码。
+所有题目页里的 C++ 代码都**实际编译并运行过**（`clang++ -std=c++17 -Wall -Wextra`，零警告，所有 `assert` 通过）。不写"看起来能跑"的伪代码，也不用 `bits/stdc++.h` 这种不可移植的聚合头。
+
+## 验证代码
+
+改完任何页面的代码，跑一次：
+
+```bash
+node scripts/verify-code.mjs
+```
+
+它会把 `docs/topics/**/*.md` 里所有带 `main` 的 cpp 代码块抽出来，逐个编译运行，**任何一段编译失败或 assert 不通过都会让脚本以非零码退出**。也可以只验一个目录：
+
+```bash
+node scripts/verify-code.mjs docs/topics/stack --keep
+```
+
+`--keep` 保留中间产物方便排查。需要 `clang++` 或 `g++` 在 PATH 里（脚本会优先用 clang++）。
 
 ## 加新题
 

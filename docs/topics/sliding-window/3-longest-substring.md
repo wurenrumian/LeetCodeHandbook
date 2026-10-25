@@ -95,7 +95,11 @@ for (int right = 0; right < n; ++right) {
 ## 完整可编译代码
 
 ```cpp
-#include <bits/stdc++.h>
+#include <algorithm>
+#include <array>
+#include <cassert>
+#include <iostream>
+#include <string>
 using namespace std;
 
 class Solution {

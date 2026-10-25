@@ -124,7 +124,10 @@ dp[i] = min(dp[i], dp[i - c] + 1);   // dp[i-c] == INT_MAX 时，+1 溢出成负
 ## 完整可编译代码
 
 ```cpp
-#include <bits/stdc++.h>
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include <vector>
 using namespace std;
 
 class Solution {
