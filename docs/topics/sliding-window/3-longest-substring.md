@@ -69,7 +69,7 @@ for (int right = 0; right < n; ++right) {
         --count[s[left]];
         ++left;
     }
-    best = max(best, right - left + 1);   // 3. 更新
+    best = max(best, right - left + 1);  // 3.
 }
 ```
 :::

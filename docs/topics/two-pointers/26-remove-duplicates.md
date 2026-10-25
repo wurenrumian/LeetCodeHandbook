@@ -59,7 +59,7 @@ for (int fast = 0; fast < n; ++fast) {
         ++slow;
     }
 }
-return slow;                     // [0, slow) 是结果
+return slow;   // [0, slow) 是结果
 ```
 ```cpp
 // 本题：slow 从 1 起

@@ -277,7 +277,18 @@ const resetAll = () => {
   width: 100%;
   border-collapse: collapse;
   font-size: 13.5px;
+  /* 别写 display: table —— 同上，会废掉横向滚动 */
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* display:block 后表头和表体需要显式成组，否则列宽对不齐 */
+.pi-table thead,
+.pi-table tbody {
   display: table;
+  width: 100%;
+  table-layout: auto;
 }
 
 .pi-table th {

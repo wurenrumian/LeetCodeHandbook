@@ -171,10 +171,17 @@
   margin-top: 0.35em;
 }
 
-/* 表格：去掉竖线，横向细线，接近技术手册 */
+/* 表格：去掉竖线，横向细线，接近技术手册
+ * 注意别写 display: table —— VitePress 用 display:block + overflow-x:auto
+ * 让宽表格自己滚动。改成 table 会让 overflow 失效，表格把整页顶横向滚动条，
+ * 窄屏下（390px）最严重的页面溢出 107px。
+ * width 也不能写 100%：display:block 时它会把窄表格也撑满，列被拉散。 */
 .vp-doc table {
-  display: table;
-  width: 100%;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: max-content;
+  max-width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   margin: 18px 0;

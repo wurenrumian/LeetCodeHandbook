@@ -86,7 +86,8 @@ while (!queue.empty()) {
     int levelSize = static_cast<int>(queue.size());
     vector<int> level;
     for (int i = 0; i < levelSize; ++i) {
-        TreeNode* node = queue.front(); queue.pop();
+        TreeNode* node = queue.front();
+        queue.pop();
         level.push_back(node->val);
         if (node->left)  queue.push(node->left);
         if (node->right) queue.push(node->right);
