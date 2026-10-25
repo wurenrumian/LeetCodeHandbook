@@ -175,6 +175,56 @@ export default defineConfig({
           ]
         }
       ],
+      '/topics/hash-table/': [
+        {
+          text: '哈希表',
+          items: [
+            { text: '专题总览 · 模板与变体', link: '/topics/hash-table/' },
+            { text: '1 · 两数之和', link: '/topics/hash-table/1-two-sum' },
+            { text: '49 · 字母异位词分组', link: '/topics/hash-table/49-group-anagrams' }
+          ]
+        }
+      ],
+      '/topics/linked-list/': [
+        {
+          text: '链表',
+          items: [
+            { text: '专题总览 · 模板与变体', link: '/topics/linked-list/' },
+            { text: '206 · 反转链表', link: '/topics/linked-list/206-reverse-list' },
+            { text: '146 · LRU 缓存', link: '/topics/linked-list/146-lru-cache' }
+          ]
+        }
+      ],
+      '/topics/stack/': [
+        {
+          text: '栈与单调栈',
+          items: [
+            { text: '专题总览 · 模板与变体', link: '/topics/stack/' },
+            { text: '20 · 有效的括号', link: '/topics/stack/20-valid-parentheses' },
+            { text: '739 · 每日温度', link: '/topics/stack/739-daily-temperatures' }
+          ]
+        }
+      ],
+      '/topics/backtracking/': [
+        {
+          text: '回溯',
+          items: [
+            { text: '专题总览 · 模板与变体', link: '/topics/backtracking/' },
+            { text: '46 · 全排列', link: '/topics/backtracking/46-permutations' },
+            { text: '78 · 子集', link: '/topics/backtracking/78-subsets' }
+          ]
+        }
+      ],
+      '/topics/graph-dfs/': [
+        {
+          text: '图的遍历 · DFS',
+          items: [
+            { text: '专题总览 · 模板与变体', link: '/topics/graph-dfs/' },
+            { text: '200 · 岛屿数量', link: '/topics/graph-dfs/200-number-of-islands' },
+            { text: '207 · 课程表', link: '/topics/graph-dfs/207-course-schedule' }
+          ]
+        }
+      ],
       '/topics/': [
         {
           text: '专题',
@@ -183,8 +233,13 @@ export default defineConfig({
             { text: '二分查找', link: '/topics/binary-search/' },
             { text: '滑动窗口', link: '/topics/sliding-window/' },
             { text: '双指针', link: '/topics/two-pointers/' },
+            { text: '哈希表', link: '/topics/hash-table/' },
+            { text: '链表', link: '/topics/linked-list/' },
+            { text: '栈与单调栈', link: '/topics/stack/' },
             { text: '动态规划', link: '/topics/dp/' },
-            { text: '树的遍历 · BFS', link: '/topics/graph-bfs/' }
+            { text: '回溯', link: '/topics/backtracking/' },
+            { text: '树的遍历 · BFS', link: '/topics/graph-bfs/' },
+            { text: '图的遍历 · DFS', link: '/topics/graph-dfs/' }
           ]
         }
       ],
