@@ -6,6 +6,14 @@ title: 704 · 二分查找
 
 <ProblemMeta id="704" difficulty="简单" title="二分查找" :tags="['数组', '左闭右开']" url="https://leetcode.cn/problems/binary-search/" />
 
+::: params 二分
+| 要素 | 本题取值 |
+| --- | --- |
+| 区间约定 | `[left, right)`，`right` 初值 `size()` |
+| 循环条件 | `left < right` |
+| 边界更新 | `left = mid + 1` / `right = mid` |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：数组**有序**且无重复，找一个值是否存在/在哪
 - **核心不变式**：`[left, right)` 之外的位置，全部已确定不等于 `target`

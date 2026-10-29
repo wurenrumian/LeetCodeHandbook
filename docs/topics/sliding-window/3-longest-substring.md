@@ -6,6 +6,14 @@ title: 3 · 无重复字符的最长子串
 
 <ProblemMeta id="3" difficulty="中等" title="无重复字符的最长子串" :tags="['哈希表', '窗口计数', '同向双指针']" url="https://leetcode.cn/problems/longest-substring-without-repeating-characters/" />
 
+::: params 滑动窗口
+| 要素 | 本题取值 |
+| --- | --- |
+| 窗口维护 | `count[s[right]]++`，状态是"每个字符出现几次" |
+| 非法条件 | 某个字符次数 > 1（只需检查刚进来的那个） |
+| 答案更新 | `while` **之后**，此刻窗口必合法（求最长） |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：求"最长连续子串"且合法性只和窗口内容有关
 - **核心不变式**：`[left, right]` 内**没有重复字符**；`left` 是"让窗口重新合法的最小位置"

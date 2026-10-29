@@ -28,6 +28,27 @@ function plainContainer(name: string, className: string) {
 }
 
 /**
+ * 实现三要素：同专题所有题目页填同一张表。
+ *
+ * 写法：::: params 二分
+ * 表体是固定的三行（要素 → 取值），由专题自己定义要素名。
+ * 检查脚本会验证同一专题下各页的要素名完全一致 —— 这张表的价值不在内容，
+ * 在于"两页的差别变成可 diff 的两行"。
+ */
+function paramsContainer(md: any) {
+  return {
+    validate: (info: string) => info.trim().startsWith('params'),
+    render: (tokens: Token[], idx: number) => {
+      const token = tokens[idx]
+      if (token.nesting !== 1) return '</div>\n'
+      const raw = token.info.trim().slice('params'.length).trim()
+      const title = raw ? `三要素 · ${raw}` : '三要素'
+      return `<div class="params"><p>${md.utils.escapeHtml(title)}</p>\n`
+    }
+  }
+}
+
+/**
  * 模板对照：左模板 / 右本题。
  *
  * 写法：::: compare 通用模板 | 本题改动
@@ -79,6 +100,7 @@ export default defineConfig({
       md.use(container, 'cheat', cheatContainer(md))
       md.use(container, 'compare', compareContainer(md))
       md.use(container, 'semantics', plainContainer('semantics', 'semantics'))
+      md.use(container, 'params', paramsContainer(md))
     }
   },
 

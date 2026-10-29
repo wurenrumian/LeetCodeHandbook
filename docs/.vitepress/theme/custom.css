@@ -464,6 +464,42 @@
   color: var(--vp-c-text-2);
 }
 
+/* 实现三要素：同专题各题填同一张表，方便横向 diff */
+.params {
+  border: 1px solid var(--vp-c-divider);
+  border-left: 3px solid var(--vp-c-warning-1);
+  border-radius: 6px;
+  background: var(--vp-c-bg-alt);
+  padding: 14px 18px;
+  margin: 22px 0;
+  font-size: 14px;
+}
+
+.params > p:first-child {
+  margin: 0 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--vp-c-warning-1);
+}
+
+.params table {
+  margin: 0;
+}
+
+.params th:first-child,
+.params td:first-child {
+  width: 26%;
+  font-family: var(--vp-font-family-mono);
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+  white-space: nowrap;
+}
+
+.params td {
+  font-size: 13.5px;
+}
+
 /* 字段语义表：变量 → 含义 → 在代码里怎么用 */
 .semantics th:first-child,
 .semantics td:first-child {

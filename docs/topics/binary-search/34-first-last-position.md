@@ -6,6 +6,14 @@ title: 34 · 在排序数组中查找元素的第一个和最后一个位置
 
 <ProblemMeta id="34" difficulty="中等" title="查找第一个和最后一个位置" :tags="['数组', '边界收缩', 'lower_bound']" url="https://leetcode.cn/problems/find-first-and-last-position-of-element-in-sorted-array/" />
 
+::: params 二分
+| 要素 | 本题取值 |
+| --- | --- |
+| 区间约定 | `[left, right)`，`right` 初值 `size()` |
+| 循环条件 | `left < right` |
+| 边界更新 | `left = mid + 1` / `right = mid`，**命中时也走 `right = mid`** |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：有序数组 + **有重复** + 要找"第一个/最后一个"而不是"任意一个"
 - **核心不变式**：`left` 的左边全部 `< target`，`right` 及其右边全部 `>= target`

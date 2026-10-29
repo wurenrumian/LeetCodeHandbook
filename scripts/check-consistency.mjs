@@ -261,6 +261,60 @@ for (const file of pageFilesAll) {
   if (verbose) console.log(`  结构：${basename(file)} ok`)
 }
 
+// ── 2b. 三要素表：同专题各页必须是同一张表的同一批要素 ──────────────────────
+
+/**
+ * 三要素表用 `::: params <专题名>`，表体第一列是要素名。
+ * 不管取值，只管**要素名和顺序**：同一专题下有两页把"循环条件"写成"终止条件"，
+ * 横向对比就失效了 —— 那正是这张表存在的理由。
+ */
+const paramsByTopic = new Map() // topic -> Map(file -> keys[])
+
+for (const file of pageFilesAll) {
+  const text = readFileSync(file, 'utf8').replace(/\r\n/g, '\n')
+  const block = text.match(/^::: params[^\n]*\n([\s\S]*?)^:::/m)
+  if (!block) continue
+
+  const keys = []
+  for (const line of lines(block[1])) {
+    const m = line.match(/^\|\s*([^|]+?)\s*\|/)
+    if (!m) continue
+    const key = m[1].trim()
+    if (!key || key === '要素' || /^-+$/.test(key)) continue
+    keys.push(key)
+  }
+
+  const topic = relative(DOCS, file).replace(/\\/g, '/').split('/')[1]
+  if (!paramsByTopic.has(topic)) paramsByTopic.set(topic, new Map())
+  paramsByTopic.get(topic).set(file, keys)
+}
+
+for (const [topic, pages] of paramsByTopic) {
+  // 同一专题里"有的页有、有的页没有"是最糟的状态：读者会以为那页忘了写
+  const topicPages = pageFilesAll.filter(
+    (f) => relative(DOCS, f).replace(/\\/g, '/').split('/')[1] === topic
+  )
+  for (const page of topicPages) {
+    if (!pages.has(page)) {
+      fail('三要素一致', page, 0, `${topic} 的其他页面都有 \`::: params\` 三要素表，这页没有`)
+    }
+  }
+
+  const [firstFile, firstKeys] = pages.entries().next().value
+  for (const [file, keys] of pages) {
+    if (keys.join('|') !== firstKeys.join('|')) {
+      fail(
+        '三要素一致',
+        file,
+        0,
+        `要素是 [${keys.join(', ')}]，与 ${basename(firstFile)} 的 [${firstKeys.join(', ')}] 不一致`
+      )
+    }
+  }
+}
+
+if (verbose) console.log(`  三要素：${paramsByTopic.size} 个专题已启用`)
+
 // ── 3. 命名一致 ────────────────────────────────────────────────────────────
 
 /** conventions.md 里明令禁止的单字母名（i/j/k/n 是约定俗成的循环变量，放行） */
