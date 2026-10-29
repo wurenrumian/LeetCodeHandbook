@@ -73,12 +73,14 @@ function parseProblems(text) {
   for (const chunk of chunks) {
     const id = chunk.match(/id:\s*(\d+)/)
     const topic = chunk.match(/topic:\s*'([^']+)'/)
-    const link = chunk.match(/link:\s*'([^']+)'/)
+    const link = chunk.match(/link:\s*'([^']*)'/)
+    const difficulty = chunk.match(/difficulty:\s*'([^']+)'/)
     if (!id || !topic) continue
     out.push({
       id: id[1],
       topic: topic[1],
-      link: link ? link[1] : null
+      link: link ? link[1] : null,
+      difficulty: difficulty ? difficulty[1] : null
     })
   }
   return out
@@ -142,6 +144,19 @@ if (dataText && configText && indexText) {
     }
     if (!rel.startsWith(`topics/${e.topic}/`)) {
       fail('注册一致', DATA, 0, `#${e.id} 声明 topic 为 ${e.topic}，页面却在 ${rel}`)
+    }
+
+    // 1a'. 页头难度必须和注册表一致 —— 索引页显示的难度是从注册表读的，
+    //      两处不一致时读者看到的是两个不同的难度，谁都不知道哪个对
+    const pageText = readFileSync(join(DOCS, rel), 'utf8')
+    const pageDiff = pageText.match(/<ProblemMeta[^>]*difficulty="([^"]+)"/)
+    if (e.difficulty && pageDiff && pageDiff[1] !== e.difficulty) {
+      fail(
+        '注册一致',
+        rel,
+        lineOf(pageText, pageDiff.index),
+        `页头难度「${pageDiff[1]}」与 problems.ts 的「${e.difficulty}」不一致`
+      )
     }
   }
 
@@ -393,11 +408,27 @@ if (existsSync(GLOSSARY)) {
   const glossaryText = read(GLOSSARY, '术语一致')
   const banned = glossaryText ? parseBannedTerms(glossaryText) : []
   if (banned.length > 0) {
+    /**
+     * 纯 ASCII 的词按词边界匹配 —— 否则「cur」会把「curr」、「pre」会把
+     * 「prerequisite」一起判掉。中文没有词边界，仍然按子串匹配。
+     */
+    const matcher = (term) =>
+      /^[\w-]+$/.test(term)
+        ? new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g')
+        : null
+
     for (const file of walk(DOCS).filter((f) => !/(\.vitepress|node_modules)/.test(f))) {
       const text = read(file, '术语一致')
       if (!text || text.includes('## 禁止写法')) continue // 术语表自己不算
       for (const { canonical, banned: variants } of banned) {
         for (const v of variants) {
+          const re = matcher(v)
+          if (re) {
+            for (const m of text.matchAll(re)) {
+              fail('术语一致', file, lineOf(text, m.index), `应写作「${canonical}」，不要写「${v}」`)
+            }
+            continue
+          }
           let idx = text.indexOf(v)
           while (idx !== -1) {
             fail('术语一致', file, lineOf(text, idx), `应写作「${canonical}」，不要写「${v}」`)

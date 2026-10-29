@@ -129,10 +129,10 @@ for (int j = weight; j <= capacity; ++j)
 `dp[i]` 只依赖前一两项，可以滚动变量压缩空间。
 
 ```cpp
-int prev = 1, cur = 1;               // 对应 dp[0], dp[1]
+int prev = 1, curr = 1;               // 对应 dp[0], dp[1]
 for (int i = 2; i <= n; ++i) {
-    int next = prev + cur;           // 注意：先算再滚，顺序不能反
-    prev = cur; cur = next;
+    int next = prev + curr;           // 注意：先算再滚，顺序不能反
+    prev = curr; curr = next;
 }
 ```
 
@@ -150,7 +150,7 @@ for (int i = 2; i <= n; ++i) {
 1. **不可达状态用 0 表示**：求 `min` 时会把"不可达"当成"代价为 0"，结果偏小。
 2. **`INF + 1` 溢出**：`INT_MAX + 1` 是 UB。用 `amount + 1` 这类"肯定超不过"的具体值，或转移前判 `!= INF`。
 3. **背包遍历方向反了**：0-1 背包写成正序 → 物品被重复使用；完全背包写成倒序 → 只能用一个。
-4. **滚动数组的更新顺序**：`next = prev + cur` 必须在 `prev = cur` **之前**，否则用错了值。
+4. **滚动数组的更新顺序**：`next = prev + curr` 必须在 `prev = curr` **之前**，否则用错了值。
 5. **答案位置错**：前缀型答案是 `dp[n]`，结尾型是 `max(dp[i])`。
 6. **`dp` 数组大小差一**：`dp[n+1]` 才能放下下标 `0..n`，写成 `dp[n]` 访问 `dp[n]` 时越界。
 :::

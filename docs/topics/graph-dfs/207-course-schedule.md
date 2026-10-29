@@ -39,7 +39,7 @@ title: 207 · 课程表
 所以问题的数学形式是：**这张有向图里有没有环？** 有环则无解（环上的课谁都不能先学），无环则有解（按拓扑序学即可）。
 
 ::: tip 提示
-边数组是 `[a, b]` 的顺序 —— **后学者在前**。建图时容易顺手写成 `graph[course].push_back(pre)`。
+边数组是 `[a, b]` 的顺序 —— **后学者在前**。建图时容易顺手写成 `graph[course].push_back(prerequisite)`。
 
 **这里有个反直觉的事实**：如果**所有**边都统一反向，环的集合不变（把环 `c1 → c2 → … → c1` 每条边翻过来，仍是同一个环的反向遍历），所以本题答案**照样正确**。我拿 4000 组随机图验证过，全部反向的版本与原版结论零差异。
 
@@ -135,15 +135,15 @@ bool dfs(vector<int>& color, int node) {
 vector<vector<int>> graph(numCourses);
 for (const auto& edge : prerequisites) {
     int course = edge[0];    // 后学的
-    int pre = edge[1];       // 先学的
-    graph[pre].push_back(course);   // 边：pre → course
+    int prerequisite = edge[1];       // 先学的
+    graph[prerequisite].push_back(course);   // 边：prerequisite → course
 }
 ```
 
 三个要点：
 
 1. **`vector<vector<int>>(numCourses)` 预设大小** —— 下标直接就是课程编号，不需要哈希，`graph[node]` 是 O(1) 的。这点是邻接表相对于 `map<int, vector<int>>` 的核心优势。
-2. **方向**：题目给的 `[a, b]` 是"a 依赖 b"，在图上画箭头是 `b → a`。写作 `graph[pre].push_back(course)`。
+2. **方向**：题目给的 `[a, b]` 是"a 依赖 b"，在图上画箭头是 `b → a`。写作 `graph[prerequisite].push_back(course)`。
 3. **有向图只存一个方向**。无向图要 `push_back` 两次（`graph[u].push_back(v)` 和 `graph[v].push_back(u)`），这里**只存一次**。多存一次等于把图变成无向的，每条边都成了二元环 —— 力扣第一个示例 `[[1,0]]` 就会从 `true` 变成 `false`。
 
 ## 完整可编译代码
@@ -157,12 +157,12 @@ using namespace std;
 class Solution {
 public:
     bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        // 邻接表：graph[pre] 存所有"把 pre 当先修"的课
+        // 邻接表：graph[prerequisite] 存所有"把 prerequisite 当先修"的课
         vector<vector<int>> graph(numCourses);
         for (const auto& edge : prerequisites) {
             int course = edge[0];   // 后学的
-            int pre = edge[1];      // 先学的
-            graph[pre].push_back(course);   // 有向边 pre → course
+            int prerequisite = edge[1];      // 先学的
+            graph[prerequisite].push_back(course);   // 有向边 prerequisite → course
         }
 
         // color: 0 未访问，1 在当前递归栈上，2 已完成
@@ -273,7 +273,7 @@ int main() {
 ::: semantics
 | 字段 | 含义 | 在代码里怎么用 |
 | --- | --- | --- |
-| `graph` | 邻接表，`graph[u]` = `u` 的所有后继 | 下标即课程编号；**只存方向 `pre → course` 一次** |
+| `graph` | 邻接表，`graph[u]` = `u` 的所有后继 | 下标即课程编号；**只存方向 `prerequisite → course` 一次** |
 | `color` | 三色状态数组，长度 `numCourses` | `0` 未访问 / `1` 栈上 / `2` 完成，替代 `bool visited` |
 | `color[node] == 1` | 它在当前递归路径上是我的祖先 | 立刻 `return false`，这是判环**唯一**的出口 |
 | `color[node] == 2` | 它及其子树已经验证无环 | `return true`，剪枝；没有它也能出正确答案，但会重复展开 |
@@ -337,7 +337,7 @@ Kahn 算法是 DFS 的对称方案：反复把入度为 0 的点入队、出队�
 
 2. **`color[course] = 2` 写到函数开头**：见上面「模板对照」的警告，全图恒返回 `true`。
 
-3. **只反了一部分边**：把 `graph[pre].push_back(course)` 写对，却在另一处（比如另一段循环、或手写 `prerequisites` 测试数据时）用了相反方向。**部分反转才是真错误**；如果所有边统一反向，环的集合不变，本题答案照样正确（见上面「题意重述」的提示）。写的时候念一遍"pre 指向 course"。
+3. **只反了一部分边**：把 `graph[prerequisite].push_back(course)` 写对，却在另一处（比如另一段循环、或手写 `prerequisites` 测试数据时）用了相反方向。**部分反转才是真错误**；如果所有边统一反向，环的集合不变，本题答案照样正确（见上面「题意重述」的提示）。写的时候念一遍"prerequisite 指向 course"。
 
 4. **无向图那样加双向边**：`graph[u].push_back(v)` 和 `graph[v].push_back(u)` 都写。每一条边都变成二元环 —— 实测 4000 组随机图里有 324 组答案从 `true` 变成 `false`，纯链 `0 → 1 → 2` 也会被判成有环。
 
@@ -356,7 +356,7 @@ Kahn 算法是 DFS 的对称方案：反复把入度为 0 的点入队、出队�
 
 也就是说，如果你先跑第二个示例、或者自己随手造了个带环的用例，就会以为代码是对的。
 
-更要紧的是，**"所有边统一反向"这个看似严重的错误其实不影响本题答案**（环集合不变），真正会错的是"只反了一部分边"。两者的区别是：前者静默且正确，后者静默且错误。所以不要指望用测试用例来确认方向 —— 正确做法是**让代码输出一个拓扑序**（210 题），肉眼检查顺序，或者在建图时就把变量命名成 `pre` 和 `course`，边写成 `graph[pre].push_back(course)` 并读作"先修指向后学"。
+更要紧的是，**"所有边统一反向"这个看似严重的错误其实不影响本题答案**（环集合不变），真正会错的是"只反了一部分边"。两者的区别是：前者静默且正确，后者静默且错误。所以不要指望用测试用例来确认方向 —— 正确做法是**让代码输出一个拓扑序**（210 题），肉眼检查顺序，或者在建图时就把变量命名成 `prerequisite` 和 `course`，边写成 `graph[prerequisite].push_back(course)` 并读作"先修指向后学"。
 :::
 
 ## 变体与练习

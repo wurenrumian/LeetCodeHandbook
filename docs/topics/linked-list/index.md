@@ -2,7 +2,7 @@
 
 链表题的难点**从来不是算法**。
 
-反转、合并、删除、找环 —— 这些题的思路往往一句话就说完。真正让你在面试里写崩的，是这样一个瞬间：你写下 `cur->next = pre;`，然后发现**再也找不到原来 `cur->next` 指向的那个节点了**，后面半条链表凭空消失。
+反转、合并、删除、找环 —— 这些题的思路往往一句话就说完。真正让你在面试里写崩的，是这样一个瞬间：你写下 `curr->next = prev;`，然后发现**再也找不到原来 `curr->next` 指向的那个节点了**，后面半条链表凭空消失。
 
 所以这个专题只练一件事：
 
@@ -12,23 +12,23 @@
 
 ## 一条铁律：先存 next，再改指针
 
-链表的节点只能**单向**访问。`cur->next` 一旦被你改成别的值，原来的后继就没人指向了 —— 那块内存还在，但**除了它不是任何人能走到的地方**。这就是"断链"。
+链表的节点只能**单向**访问。`curr->next` 一旦被你改成别的值，原来的后继就没人指向了 —— 那块内存还在，但**除了它不是任何人能走到的地方**。这就是"断链"。
 
 ```cpp
 // 错：改完就断链，原后继彻底失联
-cur->next = pre;        // 原后继的地址被覆盖
-cur = cur->next;        // 读到的其实是 pre，往回走了
+curr->next = prev;        // 原后继的地址被覆盖
+curr = curr->next;        // 读到的其实是 prev，往回走了
 ```
 
 ```cpp
 // 对：先存、再改、最后前进
-ListNode* next = cur->next;   // ① 存档原后继
-cur->next = pre;              // ② 动手掉头
-pre = cur;                    // ③ pre 追上当前节点
-cur = next;                   // ④ 用存档前进
+ListNode* next = curr->next;   // ① 存档原后继
+curr->next = prev;              // ② 动手掉头
+prev = curr;                    // ③ prev 追上当前节点
+curr = next;                   // ④ 用存档前进
 ```
 
-四行里每一步都在依赖上一步的结果，这就是"轮转"这个词的含义。③④ 的顺序尤其不能反：`pre` 必须先追上 `cur`，`cur` 才能跳走 —— 否则 `pre` 和 `cur` 会指向**同一个节点**，下一轮 `cur->next = pre` 就成了自环。
+四行里每一步都在依赖上一步的结果，这就是"轮转"这个词的含义。③④ 的顺序尤其不能反：`prev` 必须先追上 `curr`，`curr` 才能跳走 —— 否则 `prev` 和 `curr` 会指向**同一个节点**，下一轮 `curr->next = prev` 就成了自环。
 
 ::: danger 易错
 "改指针前先存"这条错了**不会崩**，也不会报错 —— 它只是在链表后半段留下一个谁都走不到的区域。程序正常退出，`assert` 却对不上，然后你只能靠打印整条链表来定位。
@@ -55,15 +55,15 @@ if (head != nullptr && head->val == target) {
 
 ```cpp
 ListNode dummy(0, head);       // 栈上分配，不 new，不用 delete
-ListNode* pre = &dummy;
+ListNode* prev = &dummy;
 
-while (pre->next != nullptr) {
-    if (pre->next->val == target) {
-        ListNode* victim = pre->next;
-        pre->next = victim->next;   // 真头和中间节点走同一条路径
+while (prev->next != nullptr) {
+    if (prev->next->val == target) {
+        ListNode* victim = prev->next;
+        prev->next = victim->next;   // 真头和中间节点走同一条路径
         delete victim;
     } else {
-        pre = pre->next;
+        prev = prev->next;
     }
 }
 return dummy.next;             // 真头可能已经被删了
@@ -79,7 +79,7 @@ return dummy.next;             // 真头可能已经被删了
 
 | 场景 | 没有哨兵 | 有哨兵 |
 |---|---|---|
-| 删除头节点 | 必须改 `head` | `pre->next = ...` 一视同仁 |
+| 删除头节点 | 必须改 `head` | `prev->next = ...` 一视同仁 |
 | 在头部插入 | 必须改 `head` 并 `return` 新头 | 插在 `dummy` 后面就是插在头部 |
 | 合并两条链表 | 第一个节点要单独挑 | 谁小接谁，从 `dummy` 开始接 |
 | 返回结果 | 要判断 `head` 是否被删空 | 恒 `return dummy.next` |
@@ -92,9 +92,9 @@ return dummy.next;             // 真头可能已经被删了
 
 | 操作 | 必须保存 | 关键语句的顺序 | 写反了会怎样 |
 |---|---|---|---|
-| 遍历 | 只读时 `node` 一个就够；要删当前节点时要 `pre` | 先读值，再前进 | 先前进 → 跳过一个节点 |
-| 插入 | `pre`（插入位置的前驱） | `node->next = pre->next;` 然后 `pre->next = node;` | 先改 `pre->next` → 新节点接不上原后继，后半截丢失 |
-| 删除 | `pre`（前驱）、`victim`（`= pre->next`） | `pre->next = victim->next;` 然后 `delete victim;` | 先 `delete` → 拿不到 `victim->next`，而且在已释放内存上取值是 UB |
+| 遍历 | 只读时 `node` 一个就够；要删当前节点时要 `prev` | 先读值，再前进 | 先前进 → 跳过一个节点 |
+| 插入 | `prev`（插入位置的前驱） | `node->next = prev->next;` 然后 `prev->next = node;` | 先改 `prev->next` → 新节点接不上原后继，后半截丢失 |
+| 删除 | `prev`（前驱）、`victim`（`= prev->next`） | `prev->next = victim->next;` 然后 `delete victim;` | 先 `delete` → 拿不到 `victim->next`，而且在已释放内存上取值是 UB |
 
 ### 遍历
 
@@ -106,32 +106,32 @@ for (ListNode* node = head; node != nullptr; node = node->next) {
 ```
 
 ```cpp
-// 边遍历边删：必须用 pre->next 判断，不能先前进
-ListNode* pre = &dummy;
-while (pre->next != nullptr) {
-    if (pre->next->val == target) {
-        eraseAfter(pre);          // 删完 pre 不动，因为它后面换了新人
+// 边遍历边删：必须用 prev->next 判断，不能先前进
+ListNode* prev = &dummy;
+while (prev->next != nullptr) {
+    if (prev->next->val == target) {
+        eraseAfter(prev);          // 删完 prev 不动，因为它后面换了新人
     } else {
-        pre = pre->next;          // 只有不删时才前进
+        prev = prev->next;          // 只有不删时才前进
     }
 }
 ```
 
-这两种写法的差别是链表删除的核心：**用 `pre->next` 当"当前节点"看，删掉它以后 `pre` 原地不动，下一个候选自动补位。** 如果你用 `cur` 直接看当前节点，删完就得自己想办法把 `cur` 挪到下一个，很容易漏。
+这两种写法的差别是链表删除的核心：**用 `prev->next` 当"当前节点"看，删掉它以后 `prev` 原地不动，下一个候选自动补位。** 如果你用 `curr` 直接看当前节点，删完就得自己想办法把 `curr` 挪到下一个，很容易漏。
 
 ### 插入
 
 ```cpp
-// 在 pre 之后插入 value，返回新节点
-ListNode* insertAfter(ListNode* pre, int value) {
+// 在 prev 之后插入 value，返回新节点
+ListNode* insertAfter(ListNode* prev, int value) {
     ListNode* node = new ListNode(value);
-    node->next = pre->next;    // ① 新节点先接住原后继
-    pre->next = node;          // ② 前驱再指向新节点
+    node->next = prev->next;    // ① 新节点先接住原后继
+    prev->next = node;          // ② 前驱再指向新节点
     return node;
 }
 ```
 
-① 和 ② 换过来，`pre->next` 已经被覆盖成 `node`，于是 `node->next = pre->next` 实际是 `node->next = node` —— **新节点指向自己，原后继整段失联**。实测两节点链表 `2 → 3` 插入头节点 `1`，结果是：
+① 和 ② 换过来，`prev->next` 已经被覆盖成 `node`，于是 `node->next = prev->next` 实际是 `node->next = node` —— **新节点指向自己，原后继整段失联**。实测两节点链表 `2 → 3` 插入头节点 `1`，结果是：
 
 ```
 1 → 1        （node->next 就是 node 自己）
@@ -144,10 +144,10 @@ ListNode* insertAfter(ListNode* pre, int value) {
 ### 删除
 
 ```cpp
-// 删除 pre 之后的那个节点
-void eraseAfter(ListNode* pre) {
-    ListNode* victim = pre->next;   // ① 先抓住要删的
-    pre->next = victim->next;       // ② 前驱跨过它
+// 删除 prev 之后的那个节点
+void eraseAfter(ListNode* prev) {
+    ListNode* victim = prev->next;   // ① 先抓住要删的
+    prev->next = victim->next;       // ② 前驱跨过它
     delete victim;                  // ③ 最后才释放
 }
 ```
@@ -248,11 +248,11 @@ ListNode* detectCycle(ListNode* head) {
 ## 坑点汇总
 
 ::: warning 坑点
-1. **改指针前没存 `next`**：`cur->next = pre` 之后原后继彻底失联，链表后半段静默消失。每条 `->next = ` 赋值之前都问一遍"还有谁要用旧的 `cur->next`"。
+1. **改指针前没存 `next`**：`curr->next = prev` 之后原后继彻底失联，链表后半段静默消失。每条 `->next = ` 赋值之前都问一遍"还有谁要用旧的 `curr->next`"。
 
 2. **删除时忘了改前驱的 `next`**：只 `delete victim` 不改指针，`victim` 的内存被释放了但前驱还指着它 → 野指针，访问即 UB。
 
-3. **空链表 / 单节点**：`while (cur->next != nullptr)` 在空链表上直接崩（`cur` 是 `nullptr`）。循环条件里凡是要解引用指针的，先用哨兵或先判空。
+3. **空链表 / 单节点**：`while (curr->next != nullptr)` 在空链表上直接崩（`curr` 是 `nullptr`）。循环条件里凡是要解引用指针的，先用哨兵或先判空。
 
 4. **`while` 条件里两个判空的顺序**：`fast->next != nullptr && fast != nullptr` 会崩，必须先判 `fast`。短路求值是靠**从左到右**的顺序保证安全的。
 

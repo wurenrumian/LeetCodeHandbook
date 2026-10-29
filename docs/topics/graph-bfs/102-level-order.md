@@ -71,9 +71,9 @@ queue.push(start);
 while (!queue.empty()) {
     int levelSize = queue.size();   // 快照
     while (levelSize--) {
-        Node* cur = queue.front(); queue.pop();
-        // 处理 cur
-        // 把 cur 的邻居入队
+        Node* curr = queue.front(); queue.pop();
+        // 处理 curr
+        // 把 curr 的邻居入队
     }
 }
 ```
@@ -174,16 +174,16 @@ TreeNode* build(const vector<int>& data) {
     queue.push(root);
     size_t i = 1;
     while (!queue.empty() && i < data.size()) {
-        TreeNode* cur = queue.front();
+        TreeNode* curr = queue.front();
         queue.pop();
         if (i < data.size() && data[i] != -1000) {
-            cur->left = new TreeNode(data[i]);
-            queue.push(cur->left);
+            curr->left = new TreeNode(data[i]);
+            queue.push(curr->left);
         }
         ++i;
         if (i < data.size() && data[i] != -1000) {
-            cur->right = new TreeNode(data[i]);
-            queue.push(cur->right);
+            curr->right = new TreeNode(data[i]);
+            queue.push(curr->right);
         }
         ++i;
     }

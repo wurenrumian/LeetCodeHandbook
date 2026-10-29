@@ -186,6 +186,8 @@ VitePress 给代码块加了 `margin: 16px -24px`（负外边距，让它撑满�
 | 中点 | `mid` |
 | 滑动窗口 | `left` / `right`（`right` 是"即将加入"的位置） |
 | 快慢指针 | `slow` / `fast` |
+| 链表三指针 | `prev` / `curr` / `next` |
+| 课程关系 | `course`（后学）/ `prerequisite`（先修） |
 | DP 表 | `dp`，下标用题目语义命名（`dp[amount]` 而非 `dp[i]` 的裸 `i`） |
 | 硬币面值 | `coin`（`for (int coin : coins)`） |
 | 候选选择 | `choice`（回溯里的"这一层选哪个"） |

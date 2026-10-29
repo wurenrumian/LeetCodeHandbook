@@ -6,6 +6,14 @@ title: 739 · 每日温度
 
 <ProblemMeta id="739" difficulty="中等" title="每日温度" :tags="['单调栈', '存下标', '递减栈']" url="https://leetcode.cn/problems/daily-temperatures/" />
 
+::: params 栈与单调栈
+| 要素 | 本题取值 |
+| --- | --- |
+| 栈里存什么 | `vector<int> stack` 存**下标**不存温度，值靠 `temperatures[idx]` 取 |
+| 入栈前做什么 | 先 `while (temperatures[today] > temperatures[stack.back()])` 把挡路的栈顶弹空 |
+| 出栈时机 | 每弹出一个 `past` 就当场结算 `answer[past] = today - past`，剩下的保持 `0` |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：对每个元素求"**右边第一个比它大**（或小）的元素"离它多远
 - **核心不变式**：栈内下标对应的温度**单调递减**，栈里全是"还在等答案"的元素

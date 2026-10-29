@@ -6,6 +6,14 @@ title: 49 · 字母异位词分组
 
 <ProblemMeta id="49" difficulty="中等" title="字母异位词分组" :tags="['哈希表', '归一化 key', '计数编码']" url="https://leetcode.cn/problems/group-anagrams/" />
 
+::: params 哈希表
+| 要素 | 本题取值 |
+| --- | --- |
+| 记录什么 | `unordered_map<string, vector<string>> groups`：「签名 → 该组原串列表」 |
+| 何时记录 | 每个串算完 `key` 就 `groups[key].push_back(str)`，边遍历边追加 |
+| key 的来路 | 26 维计数编码 `key += '#'; key += to_string(n)`（排序版是 `sort(key.begin(), key.end())`） |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：把一堆元素按「某种意义下相同」分组，且这种相同能算成一个**签名**
 - **核心不变式**：`groups[key]` 这个桶里的所有串，互为字母异位词

@@ -6,6 +6,14 @@ title: 20 · 有效的括号
 
 <ProblemMeta id="20" difficulty="简单" title="有效的括号" :tags="['栈', '配对', '哈希表']" url="https://leetcode.cn/problems/valid-parentheses/" />
 
+::: params 栈与单调栈
+| 要素 | 本题取值 |
+| --- | --- |
+| 栈里存什么 | `stack` 只放"已读入、还没配对"的**左括号**，右括号从不入栈 |
+| 入栈前做什么 | 先 `pairs.find(ch) == pairs.end()` 判断它是左括号，`push_back` 后 `continue` |
+| 出栈时机 | 右括号到来且 `stack.back() == it->second` 时 `pop_back()`，扫完靠 `return stack.empty()` 判定 |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：符号有"开/闭"两类，且要求**最近的开**配**最近的闭**
 - **核心不变式**：`stack` 里装的全是"已读入、还没被配对"的左括号

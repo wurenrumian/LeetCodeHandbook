@@ -6,6 +6,14 @@ title: 146 · LRU 缓存
 
 <ProblemMeta id="146" difficulty="中等" title="LRU 缓存" :tags="['双向链表', '哈希表', '设计题']" url="https://leetcode.cn/problems/lru-cache/" />
 
+::: params 链表
+| 要素 | 本题取值 |
+| --- | --- |
+| 指针怎么配 | `index` 存"`key` → `list` 迭代器"，一次哈希跳到节点；链表节点自带 `key` 和 `value`，链表顺序即使用顺序 |
+| 断链顺序 | 先存 `it->second->first` / `->second`，再 `cache.erase(it->second)` 摘下，然后 `push_front` 挂头，最后回填 `it->second = cache.begin()` |
+| 哨兵用在哪 | `std::list` 版不需要；手写双向链表版用 `head_` / `tail_` 两个哨兵夹住真节点，`unlink` 与 `pushFront` 因此不必判 `nullptr`、也不用特判头尾 |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：要"最近使用优先保留"的定长缓存，且 `get`/`put` 都必须 O(1)
 - **核心不变式**：链表**头部是最近使用**，**尾部是最久未使用**；表里节点数恒 `<= capacity`
@@ -60,7 +68,7 @@ get(4)   → 4
 
 淘汰分两步：找到尾部节点，然后把它从链表里摘掉。第一步单向链表也能做（维护一个 `tail` 指针即可），**第二步才是问题**：
 
-单向链表删除节点 `X`，必须改它的前驱 `pre->next`。而你手上只有 `X` —— 没有回头指针，找回前驱只能**从头再走一遍**，O(n)。
+单向链表删除节点 `X`，必须改它的前驱 `prev->next`。而你手上只有 `X` —— 没有回头指针，找回前驱只能**从头再走一遍**，O(n)。
 
 双向链表里 `X->prev` 就是前驱，`X->prev->next = X->next` 一行搞定。
 

@@ -6,10 +6,18 @@ title: 206 · 反转链表
 
 <ProblemMeta id="206" difficulty="简单" title="反转链表" :tags="['指针操作', '三指针', '递归']" url="https://leetcode.cn/problems/reverse-linked-list/" />
 
+::: params 链表
+| 要素 | 本题取值 |
+| --- | --- |
+| 指针怎么配 | `prev` 指向已反转段的头、`curr` 指向待处理段的头，两者恒差一步；`next` 只是每轮临时存档 `curr->next` |
+| 断链顺序 | 先 `ListNode* next = curr->next;` 存档，再 `curr->next = prev;` 掉头，最后 `prev = curr; curr = next;` |
+| 哨兵用在哪 | 算法本身不用哨兵（`prev` 初值 `nullptr` 就是新尾）；只有测试辅助 `build()` 里用 `ListNode dummy` 省掉头节点特判 |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：要把整条链表的**方向**掉过来，或按 "后进先出" 的角度处理链表
-- **核心不变式**：`pre` 左边（含 `pre`）已全部反转完毕，`cur` 右边（含 `cur`）是原始未动的部分
-- **一句话模板**：存 `next` → 掉头 → `pre` 追上 `cur` → `cur` 用 `next` 前进
+- **核心不变式**：`prev` 左边（含 `prev`）已全部反转完毕，`curr` 右边（含 `curr`）是原始未动的部分
+- **一句话模板**：存 `next` → 掉头 → `prev` 追上 `curr` → `curr` 用 `next` 前进
 - **复杂度**：时间 **O(n)**、空间 **O(1)**（迭代）／ **O(n)** 栈深（递归）
 :::
 
@@ -42,9 +50,9 @@ title: 206 · 反转链表
 
 但题目要求**原地反转**，代价是必须原地改 `->next`。而原地改指针有一个不可回避的冲突：
 
-> 你要把 `cur->next` 改成指向前驱，但改完之后，**你就再也找不到原来的后继了**。
+> 你要把 `curr->next` 改成指向前驱，但改完之后，**你就再也找不到原来的后继了**。
 
-所以整个算法的全部内容，就是**在改指针之前把后继存进一个局部变量**。这就是下面"三指针"命名的来源 —— 除了 `pre` 和 `cur`，你还必须有个地方放那个即将被覆盖的后继。
+所以整个算法的全部内容，就是**在改指针之前把后继存进一个局部变量**。这就是下面"三指针"命名的来源 —— 除了 `prev` 和 `curr`，你还必须有个地方放那个即将被覆盖的后继。
 
 用递归看会更清楚：`reverse(head->next)` 之后，后段已经整体反好了，`head->next` 恰好是后段的**尾**，让这个尾反过来指向 `head`，再把 `head` 自己断开就完成了。递归和迭代只是把同一件事换了个遍历方向。
 
@@ -54,22 +62,22 @@ title: 206 · 反转链表
 
 ::: compare 迭代：三指针轮转 | 递归：先反后段再接自己
 ```cpp
-// pre = 已反转部分的头
-// cur = 待处理部分的头
-ListNode* pre = nullptr;
-ListNode* cur = head;
-while (cur != nullptr) {
-    ListNode* next = cur->next;
+// prev = 已反转部分的头
+// curr = 待处理部分的头
+ListNode* prev = nullptr;
+ListNode* curr = head;
+while (curr != nullptr) {
+    ListNode* next = curr->next;
     // ① 存档：后继还在 next 里
-    cur->next = pre;
+    curr->next = prev;
     // ② 掉头
-    pre = cur;
-    // ③ pre 追上 cur
-    cur = next;
+    prev = curr;
+    // ③ prev 追上 curr
+    curr = next;
     // ④ 用存档前进
 }
-return pre;
-// cur 为空时 pre 是新头
+return prev;
+// curr 为空时 prev 是新头
 ```
 ```cpp
 // 返回：反转后的新头
@@ -90,9 +98,9 @@ ListNode* reverse(ListNode* head) {
 ```
 :::
 
-两边的 `head`/`cur` 都只被用来"指向当前待处理的节点"，但**它们对后继的依赖方式不同**：
+两边的 `head`/`curr` 都只被用来"指向当前待处理的节点"，但**它们对后继的依赖方式不同**：
 
-- 迭代版：`cur` 的后继必须在改指针**之前**读出来，所以需要第三个变量 `next`
+- 迭代版：`curr` 的后继必须在改指针**之前**读出来，所以需要第三个变量 `next`
 - 递归版：不需要存后继，因为 `head->next` 这个字段本身在递归返回到自己这一层时**还没被改过**，可以直接用
 
 这就是递归版看起来更短的原因：它把"存后继"这件事交给了调用栈。
@@ -103,33 +111,33 @@ ListNode* reverse(ListNode* head) {
 
 | 删掉 | 后果（都实测过，`1→2→3→4→5`） |
 |---|---|
-| `ListNode* next = cur->next;` | `next` 未定义，编译失败。真正的陷阱是**想省掉它、把最后一行的 `next` 换成 `cur->next`** —— 见下面 |
-| `cur->next = pre;` | 指针根本没反转。走完返回 `pre` = 原最后一个节点 `5`，但它的 `next` 是 `nullptr` → 结果只剩 `{5}` |
-| `pre = cur;` | `pre` 永远停在 `nullptr`，每轮都把当前节点的 `next` 清空 → 返回值是 `nullptr`，整条链表报废 |
-| `cur = next;` | `cur` 原地不动，条件永远为真 → **真正的无限循环** |
+| `ListNode* next = curr->next;` | `next` 未定义，编译失败。真正的陷阱是**想省掉它、把最后一行的 `next` 换成 `curr->next`** —— 见下面 |
+| `curr->next = prev;` | 指针根本没反转。走完返回 `prev` = 原最后一个节点 `5`，但它的 `next` 是 `nullptr` → 结果只剩 `{5}` |
+| `prev = curr;` | `prev` 永远停在 `nullptr`，每轮都把当前节点的 `next` 清空 → 返回值是 `nullptr`，整条链表报废 |
+| `curr = next;` | `curr` 原地不动，条件永远为真 → **真正的无限循环** |
 
-注意 ③ 和 ④ 的先后：`pre` 必须先移到 `cur` 当前位置，`cur` 才能跳走。如果先 `cur = next` 再 `pre = cur`，两者会指向同一个节点（详见坑点第 3 条）。
+注意 ③ 和 ④ 的先后：`prev` 必须先移到 `curr` 当前位置，`curr` 才能跳走。如果先 `curr = next` 再 `prev = curr`，两者会指向同一个节点（详见坑点第 3 条）。
 
 ::: danger 易错
-"用 `cur->next` 代替 `next`" 这个错误 **编译通过、不崩溃、不死循环**，只是结果悄悄变成只有一个节点。
+"用 `curr->next` 代替 `next`" 这个错误 **编译通过、不崩溃、不死循环**，只是结果悄悄变成只有一个节点。
 
 走一遍 `1→2→3`：
 
-| 步骤 | `cur->next = pre` 后 | `pre = cur` 后 | `cur = cur->next` 后 |
+| 步骤 | `curr->next = prev` 后 | `prev = curr` 后 | `curr = curr->next` 后 |
 |---|---|---|---|
-| 1 | `1.next = nullptr` | `pre = 1` | `cur = 1.next = nullptr` |
+| 1 | `1.next = nullptr` | `prev = 1` | `curr = 1.next = nullptr` |
 
-**循环跑了 1 轮就退出了**，返回值 `pre = 1`，得到 `{1}`。原链表 2、3 全部失联。
+**循环跑了 1 轮就退出了**，返回值 `prev = 1`，得到 `{1}`。原链表 2、3 全部失联。
 
 这个错误和 `return head` 的症状**一模一样**（都是只返回一个节点），所以只看输出根本分不清是哪一个错了 —— 必须靠断点或打印中间变量。
 :::
 
 ::: warning 坑点
-**循环条件写 `cur->next != nullptr` 而不是 `cur != nullptr`。**
+**循环条件写 `curr->next != nullptr` 而不是 `curr != nullptr`。**
 
-这是本题最高频的错误。`cur->next` 在 `cur == nullptr` 时就是空指针解引用，直接段错误；而且即使不崩，它也会**漏掉最后一个节点** —— 最后一个节点的 `next` 是 `nullptr`，循环条件在它还该被处理时就退出了。
+这是本题最高频的错误。`curr->next` 在 `curr == nullptr` 时就是空指针解引用，直接段错误；而且即使不崩，它也会**漏掉最后一个节点** —— 最后一个节点的 `next` 是 `nullptr`，循环条件在它还该被处理时就退出了。
 
-正确的退出条件是 `cur == nullptr`，此时 `pre` 恰好指向原链表的最后一个节点，也就是新头。
+正确的退出条件是 `curr == nullptr`，此时 `prev` 恰好指向原链表的最后一个节点，也就是新头。
 :::
 
 ### 递归版的两个关键点
@@ -184,21 +192,21 @@ class Solution {
 public:
     // ---------- 迭代版 ----------
     ListNode* reverseList(ListNode* head) {
-        ListNode* pre = nullptr;   // 已反转部分的头；初始为空
-        ListNode* cur = head;      // 待处理部分的头
+        ListNode* prev = nullptr;   // 已反转部分的头；初始为空
+        ListNode* curr = head;      // 待处理部分的头
 
-        while (cur != nullptr) {
+        while (curr != nullptr) {
             // 第 1 步：先存后继，这是"改指针前必须存档"的唯一体现
-            ListNode* next = cur->next;
-            // 第 2 步：掉头，此时 cur->next 被覆盖
-            cur->next = pre;
-            // 第 3 步：pre 追上 cur
-            pre = cur;
-            // 第 4 步：cur 用存档前进
-            cur = next;
+            ListNode* next = curr->next;
+            // 第 2 步：掉头，此时 curr->next 被覆盖
+            curr->next = prev;
+            // 第 3 步：prev 追上 curr
+            prev = curr;
+            // 第 4 步：curr 用存档前进
+            curr = next;
         }
-        // 循环退出时 cur 为空，pre 是原链表的最后一个节点 = 新头
-        return pre;
+        // 循环退出时 curr 为空，prev 是原链表的最后一个节点 = 新头
+        return prev;
     }
 
     // ---------- 递归版 ----------
@@ -349,35 +357,35 @@ LeetCode 上 206 的节点数上限是 5000，递归版在这个约束下完全�
 ::: semantics
 | 变量 | 含义 | 在代码里怎么用 |
 | --- | --- | --- |
-| `pre` | 已反转那段的**头**（初始 `nullptr`） | 每轮被赋成 `cur`，也就是刚处理完的那个节点 |
-| `cur` | 待反转那段的**头** | 每轮处理它，然后前进 |
-| `next` | `cur` 的**后继**，改指针前的存档 | 只在每轮内有效，循环体结束后就作废 |
-| `cur->next = pre` | 掉头这一动作本身 | **唯一**修改指针的一行 |
-| `cur != nullptr` | 还有节点待处理 | 退出时 `pre` 就是新头 |
+| `prev` | 已反转那段的**头**（初始 `nullptr`） | 每轮被赋成 `curr`，也就是刚处理完的那个节点 |
+| `curr` | 待反转那段的**头** | 每轮处理它，然后前进 |
+| `next` | `curr` 的**后继**，改指针前的存档 | 只在每轮内有效，循环体结束后就作废 |
+| `curr->next = prev` | 掉头这一动作本身 | **唯一**修改指针的一行 |
+| `curr != nullptr` | 还有节点待处理 | 退出时 `prev` 就是新头 |
 | `newHead` | 递归版里"反转后的新头" | 本层不修改它，只往上传 |
 | `head->next->next = head` | 让后段的尾指向自己 | 依赖"`head->next` 此刻是后段尾巴"这个事实 |
 | `head->next = nullptr` | 自己成为新尾 | 漏了会成环 |
 
 :::
 
-### 为什么 `pre` 初始是 `nullptr`
+### 为什么 `prev` 初始是 `nullptr`
 
 这个 `nullptr` 不是"为了安全"，它有确切语义：**反转后的链表尾部必须指向 `nullptr`**。
 
-第一轮处理的是原头节点，它会变成新链表的尾巴，所以它的 `next` 就该是 `nullptr` —— 而这正好是 `cur->next = pre` 在第一轮做的事。
+第一轮处理的是原头节点，它会变成新链表的尾巴，所以它的 `next` 就该是 `nullptr` —— 而这正好是 `curr->next = prev` 在第一轮做的事。
 
-如果 `pre` 初始化成 `head` 或别的什么，反转出来的链表要么成环，要么尾部指向垃圾。
+如果 `prev` 初始化成 `head` 或别的什么，反转出来的链表要么成环，要么尾部指向垃圾。
 
-### 为什么返回 `pre` 而不是 `cur`
+### 为什么返回 `prev` 而不是 `curr`
 
-看退出时机：`cur` 变成 `nullptr` 时循环退出。此时：
+看退出时机：`curr` 变成 `nullptr` 时循环退出。此时：
 
-- `cur` = `nullptr`，什么都不是
-- `pre` = **上一轮被赋值为 `cur` 的那个节点** = 原链表的最后一个节点
+- `curr` = `nullptr`，什么都不是
+- `prev` = **上一轮被赋值为 `curr` 的那个节点** = 原链表的最后一个节点
 
-原链表的最后一个节点，正是反转后链表的第一个节点。所以返回 `pre`。
+原链表的最后一个节点，正是反转后链表的第一个节点。所以返回 `prev`。
 
-`pre` 和 `cur` 始终相差一步，这个"相差一步"就是整段代码的核心：**`pre` 永远指向"最后一个已完成的节点"，`cur` 永远指向"第一个未完成的节点"**。
+`prev` 和 `curr` 始终相差一步，这个"相差一步"就是整段代码的核心：**`prev` 永远指向"最后一个已完成的节点"，`curr` 永远指向"第一个未完成的节点"**。
 
 ### 递归版：三件事的因果链
 
@@ -407,19 +415,19 @@ return newHead;                                         // ④ 新头往上传
 ## 坑点
 
 ::: warning 坑点
-1. **循环条件写成 `cur->next != nullptr`**：空链表时 `cur` 就是 `nullptr`，`cur->next` 立即空指针解引用；非空时最后一个节点的 `next` 是 `nullptr`，它还没被处理循环就退出了 → 漏掉一个节点。必须是 `cur != nullptr`。对应 `reverseList` 的 `while` 行。
+1. **循环条件写成 `curr->next != nullptr`**：空链表时 `curr` 就是 `nullptr`，`curr->next` 立即空指针解引用；非空时最后一个节点的 `next` 是 `nullptr`，它还没被处理循环就退出了 → 漏掉一个节点。必须是 `curr != nullptr`。对应 `reverseList` 的 `while` 行。
 
-2. **忘了先存 `next`**：把 `ListNode* next = cur->next;` 挪到 `cur->next = pre;` 之后，`next` 拿到的已经是 `pre`。`cur` 于是往回走，在 `pre` 和它自己之间来回摆 → 死循环。对应循环体第 1、2 行。
+2. **忘了先存 `next`**：把 `ListNode* next = curr->next;` 挪到 `curr->next = prev;` 之后，`next` 拿到的已经是 `prev`。`curr` 于是往回走，在 `prev` 和它自己之间来回摆 → 死循环。对应循环体第 1、2 行。
 
-3. **`pre = cur;` 和 `cur = next;` 顺序反了**：写成 `cur = next; pre = cur;` 之后，两个变量**指向同一个节点**。下一轮 `cur->next = pre` 就成了"自己指向自己"。实测 `1→2→3→4→5`：节点 2~5 全部变成自环，函数返回 `nullptr`，链表彻底报废。对应循环体第 3、4 行。
+3. **`prev = curr;` 和 `curr = next;` 顺序反了**：写成 `curr = next; prev = curr;` 之后，两个变量**指向同一个节点**。下一轮 `curr->next = prev` 就成了"自己指向自己"。实测 `1→2→3→4→5`：节点 2~5 全部变成自环，函数返回 `nullptr`，链表彻底报废。对应循环体第 3、4 行。
 
-4. **返回 `head`**：`head` 已被改成新尾（`next` 是 `nullptr`），`return head` 等于只返回一个节点。必须 `return pre`。
+4. **返回 `head`**：`head` 已被改成新尾（`next` 是 `nullptr`），`return head` 等于只返回一个节点。必须 `return prev`。
 
 5. **递归版漏 `head->next = nullptr;`**：成环，不崩但死循环。长度 >= 2 必然触发。对应递归函数倒数第二行。
 
 6. **递归版写成 `return head;`**：`head` 是新尾，应该 `return newHead`。
 
-7. **只测了奇数长度**：`1,2` 只要 2 轮就结束，`1,2,3` 要 3 轮。两节点是"最短的非平凡情况"，能在一屏内手工走完，也最容易暴露 `pre`/`cur` 赋值顺序写反的问题 —— 因为只有 2 轮，任何一步错都会立刻体现成 `{1, 2}` 而不是 `{2, 1}`。
+7. **只测了奇数长度**：`1,2` 只要 2 轮就结束，`1,2,3` 要 3 轮。两节点是"最短的非平凡情况"，能在一屏内手工走完，也最容易暴露 `prev`/`curr` 赋值顺序写反的问题 —— 因为只有 2 轮，任何一步错都会立刻体现成 `{1, 2}` 而不是 `{2, 1}`。
 :::
 
 ::: danger 易错
@@ -436,7 +444,7 @@ return newHead;                                         // ④ 新头往上传
 
 | 变化 | 改什么 |
 |---|---|
-| 只反转前 `k` 个（92 反转链表 II） | 找到第 `k` 个位置，把 `pre` 作为"反转段的左外驱"传入，反完后接回右段 |
+| 只反转前 `k` 个（92 反转链表 II） | 找到第 `k` 个位置，把 `prev` 作为"反转段的左外驱"传入，反完后接回右段 |
 | 每 `k` 个一组反转（25 K 个一组翻转链表） | 先数够 `k` 个，够就整体反转并递归处理剩余部分；不够就原样返回 |
 | 反转后按区间返回（206 的"部分反转"版） | 加 `left`/`right` 两个哨兵引用，返回 `(新头, 新尾)` 而不是只返回头 |
 | 两两交换节点（24） | 等价于"每组 2 个"的分组反转，但要改的是**节点**不是值 |

@@ -6,6 +6,14 @@ title: 1 · 两数之和
 
 <ProblemMeta id="1" difficulty="简单" title="两数之和" :tags="['哈希表', '边遍历边记录', '补数']" url="https://leetcode.cn/problems/two-sum/" />
 
+::: params 哈希表
+| 要素 | 本题取值 |
+| --- | --- |
+| 记录什么 | `unordered_map<int, int> seen`：「值 → 下标」，只含 `nums[0..i-1]` |
+| 何时记录 | 每轮**先** `seen.find(need)` 查补数，**后** `seen[nums[i]] = i` 登记自己 |
+| key 的来路 | key 就是 `nums[i]` 本身的值；要查的是 `need = target - nums[i]` |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：求和为定值的一对数，且要求**原下标**
 - **核心不变式**：进入第 `i` 轮时，`seen` 里正好是 `nums[0..i-1]` 的「值 → 下标」
