@@ -145,7 +145,8 @@ export default defineConfig({
           items: [
             { text: '这份手册怎么用', link: '/guide/' },
             { text: '写作与代码约定', link: '/guide/conventions' },
-            { text: '术语表', link: '/guide/glossary' }
+            { text: '术语表', link: '/guide/glossary' },
+            { text: '验证与可信度', link: '/guide/verification' }
           ]
         }
       ],

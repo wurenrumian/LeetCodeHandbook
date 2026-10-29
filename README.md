@@ -29,7 +29,9 @@ docs/
 ├── index.md                      首页
 ├── guide/
 │   ├── index.md                  使用方式
-│   └── conventions.md            写作与代码约定（加题前必读）
+│   ├── conventions.md            写作与代码约定（加题前必读）
+│   ├── glossary.md               术语表：全站唯一写法
+│   └── verification.md           验证与可信度：三道门禁查什么
 ├── problems/index.md             题目索引（可筛选）
 └── topics/
     ├── index.md                  专题总览
@@ -41,6 +43,8 @@ docs/
     ├── two-pointers/             双指针
     ├── dp/                       动态规划
     └── graph-bfs/                树的遍历 · BFS
+
+review/                           独立查验报告（不是站点内容，见 review/index.md）
 ```
 
 ## 每道题页的固定结构
@@ -48,6 +52,7 @@ docs/
 | 顺序 | 段落 | 作用 |
 |---|---|---|
 | 1 | `<ProblemMeta>` | 题号 / 难度 / 标签 / 原题链接 |
+| 1b | `::: params` 三要素表 | 本题在"区间约定 / 循环条件 / 边界更新"这类决策点上取什么值，同专题各题填同一张表 |
 | 2 | `::: cheat` 速查卡 | 30 秒回顾：信号、不变式、模板、复杂度 |
 | 3 | 题意重述 | 输入输出示例，不复述题干 |
 | 4 | 从朴素到最优 | 只讲关键转折 |
@@ -74,10 +79,11 @@ docs/
 改完任何页面的代码，跑一次：
 
 ```bash
-node scripts/verify-code.mjs
+npm run verify          # 等价于 node scripts/verify-code.mjs
+npm run check           # 注册 / 结构 / 命名 / 术语 / 三要素 一致性
 ```
 
-它会把 `docs/topics/**/*.md` 里所有带 `main` 的 cpp 代码块抽出来，逐个编译运行，**任何一段编译失败或 assert 不通过都会让脚本以非零码退出**。也可以只验一个目录：
+`verify` 会把 `docs/topics/**/*.md` 里所有带 `main` 的 cpp 代码块抽出来，逐个编译运行，**任何一段编译失败或 assert 不通过都会让脚本以非零码退出**。也可以只验一个目录：
 
 ```bash
 node scripts/verify-code.mjs docs/topics/stack --keep
@@ -85,16 +91,21 @@ node scripts/verify-code.mjs docs/topics/stack --keep
 
 `--keep` 保留中间产物方便排查。需要 `clang++` 或 `g++` 在 PATH 里（脚本会优先用 clang++）。
 
+`check` 会拦住"加了一题但忘了改侧边栏 / 题数 / 页头题号""用了 `l` `r` `c` 这类单字母名""术语写法漂了"这几类不会报错、只会慢慢变形的问题。两者在 CI 里都跑，细节见 [验证与可信度](docs/guide/verification.md)。
+
 ## 加新题
 
-见 [写作与代码约定](docs/guide/conventions.md#加一道新题的清单)。核心是三处：
+见 [写作与代码约定](docs/guide/conventions.md#加一道新题的清单)。核心是四处：
 
 1. `docs/.vitepress/theme/data/problems.ts` 加一条记录
 2. `docs/.vitepress/config.mts` 对应专题的 `sidebar` 加一项
-3. 新建 `docs/topics/<专题>/<题号>-<slug>.md`，按 9 段结构写
+3. `docs/topics/index.md` 总览表里把该专题题数 +1
+4. 新建 `docs/topics/<专题>/<题号>-<slug>.md`，按 9 段结构写
+
+第 3 条最容易忘，也最不容易被发现——它是全站唯一一个"数字"形式的冗余，漏改不报错，只会让总览表慢慢说谎。`npm run check` 会盯着它。
 
 ## 技术栈
 
 - [VitePress](https://vitepress.dev/) 1.6
 - Vue 3 + TypeScript（组件）
-- 自定义 markdown-it 容器：`cheat` / `compare` / `semantics`
+- 自定义 markdown-it 容器：`cheat` / `compare` / `semantics` / `params`
