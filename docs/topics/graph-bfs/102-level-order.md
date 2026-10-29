@@ -6,6 +6,14 @@ title: 102 · 二叉树的层序遍历
 
 <ProblemMeta id="102" difficulty="中等" title="二叉树的层序遍历" :tags="['队列', '层界快照', '二叉树']" url="https://leetcode.cn/problems/binary-tree-level-order-traversal/" />
 
+::: params 树的遍历 · BFS
+| 要素 | 本题取值 |
+| --- | --- |
+| 队列里存什么 | `queue<TreeNode*> queue` 存**节点指针**，`front()` 拿到的就是当前层的一个节点，取值靠 `node->val` |
+| 层怎么切 | 进内层 `for` 之前先 `int levelSize = static_cast<int>(queue.size())` 快照层界，本层只处理这么多个 |
+| 入队前做什么 | 先 `if (node->left)` / `if (node->right)` 判空再 `push`；空树在函数开头 `if (root == nullptr) return {}` 早退 |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：需要"按层"处理树/图，而不是按深度优先的顺序
 - **核心不变式**：进入 `while` 每一轮时，队列里**恰好是同一层的全部节点**

@@ -6,6 +6,14 @@ title: 26 · 删除有序数组中的重复项
 
 <ProblemMeta id="26" difficulty="简单" title="删除有序数组中的重复项" :tags="['数组', '原地修改', '快慢指针']" url="https://leetcode.cn/problems/remove-duplicates-from-sorted-array/" />
 
+::: params 双指针
+| 要素 | 本题取值 |
+| --- | --- |
+| 两个指针的角色 | `slow` 是写指针，指向"下一个有效元素该写的空位"，`[0, slow)` 即已确认的无重复前缀；`fast` 是读指针，从 1 起走遍全部元素做检查 |
+| 移动条件 | `fast` 每轮无条件 `++`；`slow` 只在 `nums[fast] != nums[slow - 1]` 时前进，即和**已保留的最后一个**不同（不是 `fast - 1`） |
+| 写回时机 | 先比较、成立才写 `nums[slow] = nums[fast]`，写完立刻 `++slow`；循环结束时 `slow` 就是新长度，直接 `return slow` |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：有序数组 + 原地去重 + 要求 O(1) 额外空间
 - **核心不变式**：`[0, slow)` 是**已确认的、无重复的**前缀；`slow` 是下一个待写入位置

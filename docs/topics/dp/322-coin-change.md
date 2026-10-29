@@ -6,6 +6,14 @@ title: 322 · 零钱兑换
 
 <ProblemMeta id="322" difficulty="中等" title="零钱兑换" :tags="['完全背包', '状态定义', '不可达标记']" url="https://leetcode.cn/problems/coin-change/" />
 
+::: params 动态规划
+| 要素 | 本题取值 |
+| --- | --- |
+| 状态定义 | `dp[i]` = 凑出金额 `i` 的最少硬币数；下标是**金额**，不是物品序号 |
+| 初始化 | `const int INF = amount + 1;` + `vector<int> dp(amount + 1, INF);`，再 `dp[0] = 0` —— 哨兵是安全上界，`INF + 1 > INF` 所以不用判可达 |
+| 遍历顺序 | 外层容量**正序** `for (int i = 1; i <= amount; ++i)`（完全背包，硬币可重复）；内层 `for (int coin : coins)`，顺序无关，`coin > i` 时 `continue` |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：求"凑出目标值的最少个数"，物品可重复使用
 - **核心不变式**：`dp[i]` 表示凑出金额 `i` 的**最少硬币数**，`dp[i] == INF` 表示凑不出
