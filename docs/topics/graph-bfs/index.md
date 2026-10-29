@@ -34,6 +34,7 @@ while (!queue.empty()) {
 
 ## 通用模板
 
+<!-- #region template -->
 ```cpp
 vector<vector<int>> levelOrder(TreeNode* root) {
     if (!root) return {};                    // 空树特判
@@ -61,6 +62,7 @@ vector<vector<int>> levelOrder(TreeNode* root) {
     return result;
 }
 ```
+<!-- #endregion template -->
 
 模板的四个位置，分别对应四个可以改的点：
 

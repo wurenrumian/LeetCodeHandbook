@@ -22,6 +22,7 @@
 
 ## 通用模板（求最长）
 
+<!-- #region template -->
 ```cpp
 // 求满足条件的最长窗口
 int left = 0;
@@ -43,6 +44,7 @@ for (int right = 0; right < static_cast<int>(s.size()); ++right) {
     best = max(best, right - left + 1);
 }
 ```
+<!-- #endregion template -->
 
 第 3 步的位置是**这个模板的核心**：它在 `while` 之后，所以 `[left, right]` 一定是合法的。写在外面就错了。
 

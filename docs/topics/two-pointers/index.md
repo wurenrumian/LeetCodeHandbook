@@ -16,6 +16,7 @@
 
 ## 对撞指针模板
 
+<!-- #region template-1 -->
 ```cpp
 int left = 0, right = n - 1;
 while (left < right) {          // 不是 <= ，因为不能取同一个元素
@@ -25,6 +26,7 @@ while (left < right) {          // 不是 <= ，因为不能取同一个元素
     else              --right;   // 和太大 → 需要更小的数 → 右指针左移
 }
 ```
+<!-- #endregion template-1 -->
 
 **为什么能排除**：数组升序时，`nums[left] + nums[right] < target` 说明 `nums[left]` 和**任何** `nums[j]`（`j <= right`）配对都不够大 —— 因为 `nums[right]` 已经是能配到的最大值。所以 `left` 这个位置彻底作废，可以扔。
 
@@ -36,6 +38,7 @@ while (left < right) {          // 不是 <= ，因为不能取同一个元素
 
 ## 快慢指针模板（原地修改）
 
+<!-- #region template-2 -->
 ```cpp
 int slow = 0;                       // 写指针：下一个"有效元素"该放的位置
 for (int fast = 0; fast < n; ++fast) {   // 读指针：扫描全部元素
@@ -46,6 +49,7 @@ for (int fast = 0; fast < n; ++fast) {   // 读指针：扫描全部元素
 }
 // [0, slow) 是结果
 ```
+<!-- #endregion template-2 -->
 
 理解它的关键在于**两个指针的角色不是"左右"，而是"读"和"写"**：
 

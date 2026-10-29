@@ -95,6 +95,7 @@ dp[i] = min(dp[i], dp[i - coin] + 1);
 
 0-1 背包和完全背包只差遍历方向，这是 DP 最著名的"一行之差"：
 
+<!-- #region template -->
 ```cpp
 // 0-1 背包：容量倒序 → dp[j] 用的是"上一轮"的 dp[j - w]
 for (int j = capacity; j >= weight; --j)
@@ -104,6 +105,7 @@ for (int j = capacity; j >= weight; --j)
 for (int j = weight; j <= capacity; ++j)
     dp[j] = max(dp[j], dp[j - weight] + value);
 ```
+<!-- #endregion template -->
 
 ::: details 为什么倒序就能保证"只用一次"？
 

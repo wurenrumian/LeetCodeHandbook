@@ -82,6 +82,7 @@ for (char ch : str) ++count[ch - 'a'];
 
 模板只有两行真代码，顺序是**先查、后插**：
 
+<!-- #region template -->
 ```cpp
 unordered_map<int, int> seen;       // 值 → 下标
 for (int i = 0; i < n; ++i) {
@@ -91,6 +92,7 @@ for (int i = 0; i < n; ++i) {
     seen[nums[i]] = i;
 }
 ```
+<!-- #endregion template -->
 
 这两行的顺序决定了三件事：
 

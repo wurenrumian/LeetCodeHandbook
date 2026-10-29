@@ -20,6 +20,7 @@ curr->next = prev;        // 原后继的地址被覆盖
 curr = curr->next;        // 读到的其实是 prev，往回走了
 ```
 
+<!-- #region template -->
 ```cpp
 // 对：先存、再改、最后前进
 ListNode* next = curr->next;   // ① 存档原后继
@@ -27,6 +28,7 @@ curr->next = prev;              // ② 动手掉头
 prev = curr;                    // ③ prev 追上当前节点
 curr = next;                   // ④ 用存档前进
 ```
+<!-- #endregion template -->
 
 四行里每一步都在依赖上一步的结果，这就是"轮转"这个词的含义。③④ 的顺序尤其不能反：`prev` 必须先追上 `curr`，`curr` 才能跳走 —— 否则 `prev` 和 `curr` 会指向**同一个节点**，下一轮 `curr->next = prev` 就成了自环。
 

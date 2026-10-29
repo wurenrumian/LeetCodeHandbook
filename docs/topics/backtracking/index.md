@@ -71,6 +71,7 @@ for (每个候选 choice : 当前层的选择) {
 ## 通用骨架：两版只差一个参数
 
 ::: compare 排列型：used + 每层从 0 扫 | 子集型：start + 每层从 start 扫
+<!-- #region template-1 -->
 ```cpp
 // 顺序有意义：[1,2] 和 [2,1] 都要
 void backtrack() {
@@ -88,6 +89,8 @@ void backtrack() {
     }
 }
 ```
+<!-- #endregion template-1 -->
+<!-- #region template-2 -->
 ```cpp
 // 顺序无意义：选过的下标只往后走
 void backtrack(int start) {
@@ -99,6 +102,7 @@ void backtrack(int start) {
     }
 }
 ```
+<!-- #endregion template-2 -->
 :::
 
 左栏的 `if (used[i]) continue` 保证"同一个下标只用一次"；右栏的 `i + 1` 保证"下标只增不减"。两者都在做同一件事 —— **不生成重复的路径**，只是对"什么算重复"的定义不同。

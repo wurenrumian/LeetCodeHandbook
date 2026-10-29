@@ -116,6 +116,7 @@ export default defineConfig({
     nav: [
       { text: '开始', link: '/guide/' },
       { text: '专题', link: '/topics/' },
+      { text: '模板总表', link: '/templates' },
       { text: '题目索引', link: '/problems/' },
       { text: '写作约定', link: '/guide/conventions' }
     ],

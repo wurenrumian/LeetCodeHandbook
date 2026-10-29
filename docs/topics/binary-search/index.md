@@ -20,6 +20,7 @@
 
 ## 通用模板（左闭右开，最通用）
 
+<!-- #region template -->
 ```cpp
 // 在有序数组 nums 中查找 target，返回下标，找不到返回 -1
 // 区间：[left, right) —— right 是"取不到"的位置
@@ -36,6 +37,7 @@ int binarySearch(const vector<int>& nums, int target) {
     return -1;
 }
 ```
+<!-- #endregion template -->
 
 三段式的三个决策点，改一处就是另一个变体：
 
