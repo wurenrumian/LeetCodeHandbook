@@ -91,7 +91,7 @@ node scripts/verify-code.mjs docs/topics/stack --keep
 
 `--keep` 保留中间产物方便排查。需要 `clang++` 或 `g++` 在 PATH 里（脚本会优先用 clang++）。
 
-`check` 会拦住"加了一题但忘了改侧边栏 / 题数 / 页头题号""用了 `l` `r` `c` 这类单字母名""术语写法漂了"这几类不会报错、只会慢慢变形的问题。两者在 CI 里都跑，细节见 [验证与可信度](docs/guide/verification.md)。
+`check` 会拦住"加了一题但忘了改侧边栏 / 题数 / 页头题号""用了 `l` `r` `c` 这类单字母名""术语写法漂了"这几类不会报错、只会慢慢变形的问题。两条命令都是本地手动跑，没有 CI；细节见 [验证与可信度](docs/guide/verification.md)。
 
 ## 加新题
 

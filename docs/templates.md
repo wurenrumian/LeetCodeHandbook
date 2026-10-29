@@ -95,6 +95,6 @@ DP 最常错的不是转移方程，是**遍历方向**——0-1 背包倒序、
 
 ::: info 为什么这页能一直是对的
 
-`docs/topics/*/index.md` 里的 `<!-- #region template -->` 标出了"这一页的骨架是哪一块"，本页用 VitePress 的 snippet 语法引用它。CI 每次构建都会重新拼一遍，所以这里永远等于专题页当下的样子——不需要额外的比对脚本，因为它物理上只有一份。
+`docs/topics/*/index.md` 里的 `<!-- #region template -->` 标出了"这一页的骨架是哪一块"，本页用 VitePress 的 snippet 语法引用它。每次 `npm run build` 都会重新拼一遍，所以这里永远等于专题页当下的样子——不需要额外的比对脚本，因为它物理上只有一份。
 
 :::
