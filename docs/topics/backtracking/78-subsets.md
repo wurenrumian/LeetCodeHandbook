@@ -6,6 +6,14 @@ title: 78 · 子集
 
 <ProblemMeta id="78" difficulty="中等" title="子集" :tags="['回溯', 'start 参数', '幂集']" url="https://leetcode.cn/problems/subsets/" />
 
+::: params 回溯
+| 要素 | 本题取值 |
+| --- | --- |
+| 一层在决策什么 | 下一个选的数取 `[start, n)` 里的哪个；**每进一次递归就收一个答案**（含空集） |
+| 分支怎么枚举 | `for (int i = start; i < n; ++i)`，只往后扫，不回头 |
+| 撤销写在哪 | 递归返回后 `path.pop_back()`；没有 `used` 要复位，`start` 是参数、天然回溯 |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：要枚举"选哪些元素"，而 `{1,2}` 和 `{2,1}` 算同一个答案
 - **核心不变式**：递归参数 `start` 之前的下标**已经决定过**，本层只能在 `[start, n)` 里挑

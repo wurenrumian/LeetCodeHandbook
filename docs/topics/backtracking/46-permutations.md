@@ -6,6 +6,14 @@ title: 46 · 全排列
 
 <ProblemMeta id="46" difficulty="中等" title="全排列" :tags="['回溯', 'used 数组', '排列']" url="https://leetcode.cn/problems/permutations/" />
 
+::: params 回溯
+| 要素 | 本题取值 |
+| --- | --- |
+| 一层在决策什么 | 结果的**第 `path.size()` 位**放哪个数；`path.size() == n` 就是叶子 |
+| 分支怎么枚举 | 每层从 `0` 扫到 `n - 1`，只跳过 `used[i] == true`（已在当前路径上）的 |
+| 撤销写在哪 | 递归返回后紧接着 `path.pop_back()` + `used[i] = false`，两行都不能少 |
+:::
+
 ::: cheat 速查卡
 - **什么时候用**：要把 `n` 个元素**排个顺序**，`[1,2]` 和 `[2,1]` 算两个答案
 - **核心不变式**：`used[i]` 为真 ⇔ `nums[i]` 在**当前这条路径**上，不是"全局用过"

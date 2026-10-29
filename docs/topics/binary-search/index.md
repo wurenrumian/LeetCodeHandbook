@@ -14,6 +14,8 @@
 | 左闭右开 | `[left, right)` | `left < right` | `left = mid + 1` / `right = mid` | `left == right`，是插入位置 |
 | 求下界（`lower_bound`） | `[0, n)`，找第一个 `>= target` | `left < right` | `left = mid + 1` / `right = mid` | `left` 就是答案 |
 
+三个决策点的**定义与可选值**在 [术语表](/guide/glossary) 里，不再在本页重复一遍；每道题实际取了哪一组，看它页头的「三要素」表。
+
 ::: warning 坑点
 **混用是死循环的第一来源。** 左闭右闭却写 `right = mid`，当 `left == right == mid` 时区间不缩小 → 死循环。左闭右开却写 `while (left <= right)`，`right = n` 时会越界。
 :::
@@ -39,13 +41,7 @@ int binarySearch(const vector<int>& nums, int target) {
 ```
 <!-- #endregion template -->
 
-三段式的三个决策点，改一处就是另一个变体：
-
-| 决策点 | 可选值 | 影响 |
-|---|---|---|
-| `right` 初始值 | `n` 或 `n - 1` | 决定区间开闭 |
-| 循环条件 | `left < right` 或 `left <= right` | 必须匹配区间语义 |
-| 收缩方式 | `right = mid` 或 `mid - 1` | 决定 `mid` 本身被不被排除 |
+三段式的三个决策点，改一处就是另一个变体。可选值的全集见[术语表](/guide/glossary)，本题取的那一组在页头的三要素表里。
 
 ## 变体索引
 
