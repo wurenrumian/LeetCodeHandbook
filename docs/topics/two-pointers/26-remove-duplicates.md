@@ -148,27 +148,28 @@ public:
 int main() {
     Solution sol;
 
-    vector<int> a{1, 1, 2};
-    int k1 = sol.removeDuplicates(a);
+    vector<int> duplicates{1, 1, 2};
+    int k1 = sol.removeDuplicates(duplicates);
     assert(k1 == 2);
-    assert((vector<int>(a.begin(), a.begin() + k1) == vector<int>{1, 2}));
+    assert((vector<int>(duplicates.begin(), duplicates.begin() + k1) == vector<int>{1, 2}));
 
-    vector<int> b{0, 0, 1, 1, 1, 2, 2, 3, 3, 4};
-    int k2 = sol.removeDuplicates(b);
+    vector<int> manyDuplicates{0, 0, 1, 1, 1, 2, 2, 3, 3, 4};
+    int k2 = sol.removeDuplicates(manyDuplicates);
     assert(k2 == 5);
-    assert((vector<int>(b.begin(), b.begin() + k2) == vector<int>{0, 1, 2, 3, 4}));
+    assert((vector<int>(manyDuplicates.begin(), manyDuplicates.begin() + k2) ==
+            vector<int>{0, 1, 2, 3, 4}));
 
-    vector<int> c{1};
-    assert(sol.removeDuplicates(c) == 1);
+    vector<int> single{1};
+    assert(sol.removeDuplicates(single) == 1);
 
-    vector<int> d{};
-    assert(sol.removeDuplicates(d) == 0);        // 空数组
+    vector<int> empty{};
+    assert(sol.removeDuplicates(empty) == 0);        // 空数组
 
-    vector<int> e{2, 2, 2, 2};
-    assert(sol.removeDuplicates(e) == 1);        // 全相同
+    vector<int> allSame{2, 2, 2, 2};
+    assert(sol.removeDuplicates(allSame) == 1);      // 全相同
 
-    vector<int> f{1, 2, 3};
-    assert(sol.removeDuplicates(f) == 3);        // 无重复
+    vector<int> noDuplicates{1, 2, 3};
+    assert(sol.removeDuplicates(noDuplicates) == 3); // 无重复
 
     cout << "all tests passed" << endl;
     return 0;

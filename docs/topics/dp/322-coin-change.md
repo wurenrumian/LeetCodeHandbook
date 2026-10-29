@@ -9,7 +9,7 @@ title: 322 · 零钱兑换
 ::: cheat 速查卡
 - **什么时候用**：求"凑出目标值的最少个数"，物品可重复使用
 - **核心不变式**：`dp[i]` 表示凑出金额 `i` 的**最少硬币数**，`dp[i] == INF` 表示凑不出
-- **一句话模板**：完全背包，容量正序，`dp[i] = min(dp[i], dp[i-c] + 1)`
+- **一句话模板**：完全背包，容量正序，`dp[i] = min(dp[i], dp[i - coin] + 1)`
 - **复杂度**：时间 **O(amount × n)**、空间 **O(amount)**
 :::
 
@@ -40,7 +40,7 @@ title: 322 · 零钱兑换
 
 关键观察：**凑出金额 `i` 的问题，和凑出更小金额的问题是同一类问题。**
 
-凑 11 的最后一步，必然是用了某个面值 `c` 的硬币，剩下的 `11 - c` 仍然要"最少硬币数"凑出来。这就是**最优子结构**：
+凑 11 的最后一步，必然是用了一枚面值可记为 `coin` 的硬币，剩下的 `11 - coin` 仍然要"最少硬币数"凑出来。这就是**最优子结构**：
 
 ```
 dp[11] = min(dp[11-1], dp[11-2], dp[11-5]) + 1
@@ -57,9 +57,9 @@ dp[11] = min(dp[11-1], dp[11-2], dp[11-5]) + 1
 vector<int> dp(capacity + 1, INF);
 dp[0] = 0;
 for (int i = 1; i <= capacity; ++i) {
-    for (int c : items) {
-        if (c > i) continue;
-        dp[i] = min(dp[i], dp[i - c] + cost);
+    for (int coin : items) {
+        if (coin > i) continue;
+        dp[i] = min(dp[i], dp[i - coin] + cost);
     }
 }
 ```
@@ -69,9 +69,9 @@ for (int i = 1; i <= capacity; ++i) {
 vector<int> dp(amount + 1, amount + 1);
 dp[0] = 0;
 for (int i = 1; i <= amount; ++i) {
-    for (int c : coins) {
-        if (c > i) continue;
-        dp[i] = min(dp[i], dp[i - c] + 1);
+    for (int coin : coins) {
+        if (coin > i) continue;
+        dp[i] = min(dp[i], dp[i - coin] + 1);
     }
 }
 return dp[amount] > amount ? -1 : dp[amount];
@@ -90,7 +90,7 @@ return dp[amount] > amount ? -1 : dp[amount];
 对比 `INT_MAX`：
 
 ```cpp
-dp[i] = min(dp[i], dp[i - c] + 1);   // dp[i-c] == INT_MAX 时，+1 溢出成负数
+dp[i] = min(dp[i], dp[i - coin] + 1);   // dp[i - coin] == INT_MAX 时，+1 溢出成负数
 ```
 
 `INT_MAX + 1` 是有符号溢出，**未定义行为**。而且在常见的补码实现里它变成 `INT_MIN`，`min` **一定会选中它**（`INT_MIN < INT_MAX`），`dp[i]` 被污染成负数，最终返回一个荒谬的数字而不是 `-1`：
@@ -102,7 +102,7 @@ coins = {2}, amount = 3  →  返回 -2147483648（应为 -1）
 这不是"碰巧没事"，是"碰巧看起来像个数字"。
 
 ::: danger 易错
-用 `INT_MAX` 当哨兵时，如果转移写成 `dp[i] = min(dp[i], dp[i-c] + 1)` 而不判 `dp[i-c] != INT_MAX`，**这是 UB**。在开启 `-ftrapv` 或某些优化级别下会出问题，OJ 上偶发 RE。
+用 `INT_MAX` 当哨兵时，如果转移写成 `dp[i] = min(dp[i], dp[i - coin] + 1)` 而不判 `dp[i - coin] != INT_MAX`，**这是 UB**。在开启 `-ftrapv` 或某些优化级别下会出问题，OJ 上偶发 RE。
 
 用 `amount + 1` 这类具体值就完全没这个隐患。
 :::
@@ -150,7 +150,7 @@ public:
         for (int i = 1; i <= amount; ++i) {           // 容量正序 = 完全背包
             for (int coin : coins) {
                 if (coin > i) continue;               // 面值超过目标金额
-                // dp[i-coin] 若仍为 INF，INF+1 > INF，min 不会选中它
+                // dp[i - coin] 若仍为 INF，INF+1 > INF，min 不会选中它
                 dp[i] = min(dp[i], dp[i - coin] + 1);
             }
         }
@@ -242,13 +242,13 @@ dp[i] = min(dp[i], dp[i - coin] + 1);
 写成 `dp[i] = min(dp[i], dp[i - coin]) + 1` 是**错的**：
 
 - 前者：对每个 `coin` 尝试"用一枚"，取所有方案的最小值
-- 后者：先取 `dp[i-coin]` 的最小值，再加 1 —— 但 `min` 是在循环内做的话，`dp[i]` 会被反复 `+1`
+- 后者：先取 `dp[i - coin]` 的最小值，再加 1 —— 但 `min` 是在循环内做的话，`dp[i]` 会被反复 `+1`
 
 具体说，`dp[i]` 初始是 `INF`，第一次循环后变成 `INF + 1`，第二次又 `+1`…… 结果随 `coins.size()` 增长。**`+1` 必须在 `min` 的参数里，跟着单次决策走。**
 
 ### 为什么内层 `coin` 顺序无所谓
 
-`min` 满足交换律和结合律，`dp[i] = min(dp[i], dp[i-c1]+1, dp[i-c2]+1, ...)` 与 `c` 的遍历顺序无关。
+`min` 满足交换律和结合律，`dp[i] = min(dp[i], dp[i-coin1]+1, dp[i-coin2]+1, ...)` 与 `coin` 的遍历顺序无关。
 
 但**这个自由只在求 `min`/`max` 时成立**。求方案数时是累加（`+=`），顺序会改变计数语义，见上面的坑点。
 
@@ -259,7 +259,7 @@ dp[i] = min(dp[i], dp[i - coin] + 1);
 
 2. **`amount == 0` 的特判**：其实 `dp[0] = 0` 已经处理了，`amount == 0` 时循环不进、直接返回 0。但显式写 `if (amount == 0) return 0;` 更清晰，也能防 `dp` 构造时的边界问题。
 
-3. **`INF` 用 `INT_MAX`**：`dp[i-coin] + 1` 溢出，UB。
+3. **`INF` 用 `INT_MAX`**：`dp[i - coin] + 1` 溢出，UB。
 
 4. **`coin > i` 忘记跳过**：`dp[i - coin]` 下标为负 → 越界。虽然 `dp` 的 `operator[]` 不做检查，但读到的垃圾值会污染 `min`。
 
@@ -284,8 +284,8 @@ dp[i] = min(dp[i], dp[i - coin] + 1);
 | 变化 | 改什么 |
 |---|---|
 | 每种硬币只能用一次（0-1 背包） | 容量**倒序**遍历 |
-| 求方案数（518） | `dp[0] = 1`，`dp[i] += dp[i-c]`，**物品在外层** |
-| 求方案数且顺序有关（377） | `dp[0] = 1`，`dp[i] += dp[i-c]`，**容量在外层** |
+| 求方案数（518） | `dp[0] = 1`，`dp[i] += dp[i - coin]`，**物品在外层** |
+| 求方案数且顺序有关（377） | `dp[0] = 1`，`dp[i] += dp[i - coin]`，**容量在外层** |
 | 要求输出具体方案 | 额外记录 `choice[i]`，最后回溯 |
 | 硬币数量有限 | 变成多重背包，需要额外维度或二进制拆分 |
 

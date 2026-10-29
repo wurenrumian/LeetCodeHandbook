@@ -30,7 +30,7 @@ docs/
 ├── guide/
 │   ├── index.md                  使用方式
 │   └── conventions.md            写作与代码约定（加题前必读）
-├── problems/index.md             题目索引（可筛选 + 进度追踪）
+├── problems/index.md             题目索引（可筛选）
 └── topics/
     ├── index.md                  专题总览
     ├── binary-search/            二分查找
@@ -47,7 +47,7 @@ docs/
 
 | 顺序 | 段落 | 作用 |
 |---|---|---|
-| 1 | `<ProblemMeta>` | 题号 / 难度 / 标签 / 进度按钮 |
+| 1 | `<ProblemMeta>` | 题号 / 难度 / 标签 / 原题链接 |
 | 2 | `::: cheat` 速查卡 | 30 秒回顾：信号、不变式、模板、复杂度 |
 | 3 | 题意重述 | 输入输出示例，不复述题干 |
 | 4 | 从朴素到最优 | 只讲关键转折 |
@@ -62,8 +62,8 @@ docs/
 - **本地搜索**：VitePress 内置全文搜索，零配置
 - **代码块**：行号、复制按钮、行高亮（` ```cpp{3-5} `）、`[filename]` 标题
 - **题目索引**：按难度 / 专题 / 标签 / 关键词筛选
-- **刷题进度**：三态标记（未开始 / 待复习 / 已掌握），存 `localStorage`
 - **明暗主题**：右上角切换
+- **无状态**：不登录、不存进度、不做测评，站点内容对所有人一致
 
 ## 内容真实性
 
@@ -96,5 +96,5 @@ node scripts/verify-code.mjs docs/topics/stack --keep
 ## 技术栈
 
 - [VitePress](https://vitepress.dev/) 1.6
-- Vue 3 + TypeScript（组件与进度逻辑）
+- Vue 3 + TypeScript（组件）
 - 自定义 markdown-it 容器：`cheat` / `compare` / `semantics`

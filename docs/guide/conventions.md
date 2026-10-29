@@ -162,15 +162,26 @@ VitePress 给代码块加了 `margin: 16px -24px`（负外边距，让它撑满�
 | 滑动窗口 | `left` / `right`（`right` 是"即将加入"的位置） |
 | 快慢指针 | `slow` / `fast` |
 | DP 表 | `dp`，下标用题目语义命名（`dp[amount]` 而非 `dp[i]` 的裸 `i`） |
+| 硬币面值 | `coin`（`for (int coin : coins)`） |
+| 候选选择 | `choice`（回溯里的"这一层选哪个"） |
 | 队列 | `queue`（不用 `q`） |
 | 邻接表 | `graph` |
 | 访问标记 | `visited` |
 | 距离/步数 | `dist` / `steps` |
 
+这张表由 `npm run check` 强制：`l` `r` `m` `c` `q` 出现在任何 ```cpp 块里都会报错并给出文件行号。`i` `j` `k` `n` 是约定俗成的循环变量，放行。
+
+算法与概念的术语（左闭右开、层界快照、三色标记……）见 [术语表](/guide/glossary)，那里是唯一来源。
+
 ## 加一道新题的清单
 
 1. `docs/.vitepress/theme/data/problems.ts` 里加一条 `PROBLEMS` 记录（题号作 key，`link` 指向新页面）
 2. `docs/.vitepress/config.mts` 的对应专题 `sidebar` 里加一项
-3. 新建 `docs/topics/<专题>/<题号>-<slug>.md`
-4. 按上面的 9 段结构写完
-5. `npm run build` 确认没报死链
+3. `docs/topics/index.md` 这张总览表里，把对应专题的题数 **+1**
+4. 新建 `docs/topics/<专题>/<题号>-<slug>.md`
+5. 按上面的 9 段结构写完
+6. `npm run verify` 确认新代码能编译、断言能过
+7. `npm run check` 确认注册 / 结构 / 命名 / 术语四处没掉队
+8. `npm run build` 确认没报死链
+
+第 3 步最容易被忘 —— 它是全站唯一一个"数字"形式的冗余，漏改不会报错，只会让总览表慢慢说谎。所以第 7 步的检查脚本会盯着它。

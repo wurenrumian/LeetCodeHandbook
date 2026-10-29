@@ -6,7 +6,6 @@
  * <ProblemMeta id="34" difficulty="中等" title="查找第一个和最后一个位置" :tags="['二分', '边界']" />
  */
 import { computed } from 'vue'
-import ProgressToggle from './ProgressToggle.vue'
 
 const props = defineProps<{
   id: number | string
@@ -32,7 +31,6 @@ const lcUrl = computed(
     <span v-for="t in tags" :key="t" class="pm-tag">{{ t }}</span>
     <span class="pm-spacer" />
     <a v-if="url" class="pm-lc" :href="lcUrl" target="_blank" rel="noreferrer">原题 ↗</a>
-    <ProgressToggle :id="id" />
   </div>
 </template>
 
